@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mandatos</title>
+  </head>
+
+  <body>
+    <h1>Mandatos</h1>
+
+    <p>
+      <a href="{% url 'registar_mandato' %}"> Registar novo mandato </a>
+    </p>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Associação</th>
+          <th>Data de início</th>
+          <th>Data de fim</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for mandato in mandatos %}
+        <tr>
+          <td>{{ mandato.0 }}</td>
+          <td>{{ mandato.4 }}</td>
+          <td>{{ mandato.1|date:"d/m/Y" }}</td>
+          <td>{{ mandato.2|date:"d/m/Y" }}</td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="4">Não existem mandatos registados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

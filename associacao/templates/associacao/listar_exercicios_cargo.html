@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Exercícios de Cargo</title>
+  </head>
+
+  <body>
+    <h1>Exercícios de Cargo</h1>
+
+    <p>
+      <a href="{% url 'registar_exercicio_cargo' %}">
+        Registar novo exercício de cargo
+      </a>
+    </p>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Associado</th>
+          <th>Cargo</th>
+          <th>Órgão Social</th>
+          <th>Mandato</th>
+          <th>Data de início</th>
+          <th>Data de fim</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for exercicio in exercicios %}
+        <tr>
+          <td>{{ exercicio.0 }}</td>
+
+          <td>{{ exercicio.4 }}</td>
+
+          <td>{{ exercicio.6 }}</td>
+
+          <td>{{ exercicio.8 }}</td>
+
+          <td>
+            {{ exercicio.10|date:"d/m/Y" }} - {{ exercicio.11|date:"d/m/Y" }}
+          </td>
+
+          <td>{{ exercicio.1|date:"d/m/Y" }}</td>
+
+          <td>
+            {% if exercicio.2 %} {{ exercicio.2|date:"d/m/Y" }} {% else %} Em
+            exercício {% endif %}
+          </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="7">Não existem exercícios de cargo registados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

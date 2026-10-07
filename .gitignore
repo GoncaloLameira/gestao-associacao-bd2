@@ -1,0 +1,15 @@
+# Ambiente virtual
+.venv/
+
+# Credenciais locais
+dadosutilizador.py
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/

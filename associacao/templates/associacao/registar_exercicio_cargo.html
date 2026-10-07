@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registar Exercício de Cargo</title>
+  </head>
+
+  <body>
+    <h1>Registar Exercício de Cargo</h1>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Registar</button>
+    </form>
+
+    <p>
+      <a href="{% url 'listar_exercicios_cargo' %}"> Voltar à lista </a>
+    </p>
+  </body>
+</html>
