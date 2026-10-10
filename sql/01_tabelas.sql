@@ -10,7 +10,7 @@
 
 CREATE TABLE localidade (
     id_localidade INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome_localidade VARCHAR(150) NOT NULL UNIQUE
+    nome_localidade VARCHAR(100) NOT NULL UNIQUE
 );
 
 
@@ -21,7 +21,7 @@ CREATE TABLE localidade (
 CREATE TABLE associacao (
     id_associacao INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nipc VARCHAR(9) NOT NULL UNIQUE,
-    nome VARCHAR(150) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
     data_fundacao DATE,
     email VARCHAR(150),
     telefone VARCHAR(20),
@@ -47,14 +47,14 @@ CREATE TABLE associacao (
 CREATE TABLE associado (
     id_associado INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     numero_associado INTEGER NOT NULL UNIQUE,
-    nome VARCHAR(150) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
     nif VARCHAR(9),
     data_nascimento DATE,
     email VARCHAR(150),
     telefone VARCHAR(20),
     data_adesao DATE NOT NULL,
     data_saida DATE,
-    estado VARCHAR(30) NOT NULL,
+    estado VARCHAR(100) NOT NULL,
 
     tipo_via VARCHAR(30),
     nome_via VARCHAR(150),
@@ -114,7 +114,7 @@ CREATE TABLE cargo (
 CREATE TABLE mandato (
     id_mandato INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     data_inicio DATE NOT NULL,
-    data_fim DATE NOT NULL,
+    data_fim DATE,
     id_associacao INTEGER NOT NULL,
 
     CONSTRAINT fk_mandato_associacao
@@ -160,35 +160,21 @@ CREATE TABLE exercicio_cargo (
 -- ==========================================
 
 
-CREATE OR REPLACE PROCEDURE registar_quota(
-    p_designacao_quota VARCHAR(100),
-    p_valor_quota REAL,
-    p_periodicidade_quota VARCHAR(20),
-    p_data_inicio_quota DATE,
-    p_data_fim_quota DATE,
-    p_id_associacao INTEGER
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO quota (
-        designacao_quota,
-        valor_quota,
-        periodicidade_quota,
-        data_inicio_quota,
-        data_fim_quota,
-        id_associacao
-    )
-    VALUES (
-        p_designacao_quota,
-        p_valor_quota,
-        p_periodicidade_quota,
-        p_data_inicio_quota,
-        p_data_fim_quota,
-        p_id_associacao
-    );
-END;
-$$;
+
+CREATE TABLE quota (
+    id_quota INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    designacao_quota VARCHAR(100) NOT NULL,
+    valor_quota REAL NOT NULL,
+    periodicidade_quota VARCHAR(20) NOT NULL,
+    data_inicio_quota DATE NOT NULL,
+    data_fim_quota DATE,
+    id_associacao INTEGER NOT NULL,
+
+    CONSTRAINT fk_quota_associacao
+        FOREIGN KEY (id_associacao)
+        REFERENCES associacao(id_associacao)
+);
+
 
 
 
@@ -201,7 +187,7 @@ CREATE TABLE quota_associado (
     valor_devido NUMERIC(10,2) NOT NULL,
     data_vencimento DATE NOT NULL,
     periodo_referencia VARCHAR(20) NOT NULL,
-    estado_quota_associado VARCHAR(20) NOT NULL,
+    estado_quota_associado VARCHAR(100) NOT NULL,
 
     id_associado INTEGER NOT NULL,
     id_quota INTEGER NOT NULL,

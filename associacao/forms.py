@@ -9,8 +9,9 @@ class MandatoForm(forms.Form):
     )
 
     data_fim = forms.DateField(
-        label='Data de fim',
-        widget=forms.DateInput(attrs={'type': 'date'})
+        label="Data de fim",
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date"})
     )
 
     id_associacao = forms.IntegerField(
