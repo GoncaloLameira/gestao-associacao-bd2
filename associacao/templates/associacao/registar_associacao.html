@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registar associação</title>
+  </head>
+
+  <body>
+    <h1>Registar associação</h1>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Registar associação</button>
+    </form>
+
+    <p>
+      <a href="{% url 'listar_associacoes' %}">
+        Voltar à lista de associações
+      </a>
+    </p>
+  </body>
+</html>

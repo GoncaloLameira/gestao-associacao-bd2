@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cargos</title>
+  </head>
+  <body>
+    <h1>Cargos</h1>
+
+    <p>
+      <a href="{% url 'registar_cargo' %}"> Registar novo cargo </a>
+    </p>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Órgão Social</th>
+          <th>Associação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cargo in cargos %}
+        <tr>
+          <td>{{ cargo.0 }}</td>
+          <td>{{ cargo.1 }}</td>
+          <td>{{ cargo.2 }}</td>
+          <td>{{ cargo.3 }}</td>
+          <td>{{ cargo.4 }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5">Nenhum cargo registado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

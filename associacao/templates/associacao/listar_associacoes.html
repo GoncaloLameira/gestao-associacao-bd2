@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Associações</title>
+  </head>
+
+  <body>
+    <h1>Associações</h1>
+
+    <p>
+      <a href="{% url 'registar_associacao' %}"> Registar associação </a>
+    </p>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NIPC</th>
+          <th>Nome</th>
+          <th>Data de fundação</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Localidade</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for associacao in associacoes %}
+        <tr>
+          <td>{{ associacao.0 }}</td>
+          <td>{{ associacao.1 }}</td>
+          <td>{{ associacao.2 }}</td>
+          <td>{{ associacao.3|date:"d/m/Y" }}</td>
+          <td>{{ associacao.4 }}</td>
+          <td>{{ associacao.5 }}</td>
+          <td>{{ associacao.11|default:"-" }}</td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="7">Não existe nenhuma associação registada.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p>
+      <a href="{% url 'listar_eventos' %}">Consultar eventos</a>
+    </p>
+  </body>
+</html>

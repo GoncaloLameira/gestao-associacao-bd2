@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Eventos</title>
+  </head>
+
+  <body>
+    <h1>Eventos</h1>
+
+    <p>
+      <a href="{% url 'registar_evento' %}"> Registar novo evento </a>
+    </p>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Local</th>
+          <th>Estado</th>
+          <th>Associação</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for evento in eventos %}
+        <tr>
+          <td>{{ evento.0 }}</td>
+          <td>{{ evento.1 }}</td>
+          <td>{{ evento.2 }}</td>
+          <td>{{ evento.3|date:"d/m/Y H:i" }}</td>
+          <td>{{ evento.4|date:"d/m/Y H:i"|default:"-" }}</td>
+          <td>{{ evento.5 }}</td>
+          <td>{{ evento.6 }}</td>
+          <td>{{ evento.7 }}</td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="8">Não existem eventos registados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p>
+      <a href="{% url 'listar_associacoes' %}"> Consultar associação </a>
+    </p>
+  </body>
+</html>

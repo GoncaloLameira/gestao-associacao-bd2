@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Quotas</title>
+  </head>
+  <body>
+    <h1>Lista de Quotas</h1>
+
+    <p>
+      <a href="{% url 'registar_quota' %}">Registar nova quota</a>
+    </p>
+
+    <table border="1" cellpadding="8">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Designação</th>
+          <th>Valor (€)</th>
+          <th>Periodicidade</th>
+          <th>Data de início</th>
+          <th>Data de fim</th>
+          <th>Associação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for quota in quotas %}
+        <tr>
+          <td>{{ quota.0 }}</td>
+          <td>{{ quota.1 }}</td>
+          <td>{{ quota.2|floatformat:2 }}</td>
+          <td>{{ quota.3 }}</td>
+          <td>{{ quota.4 }}</td>
+          <td>{{ quota.5|default:"—" }}</td>
+          <td>{{ quota.6 }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7">Ainda não existem quotas registadas.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

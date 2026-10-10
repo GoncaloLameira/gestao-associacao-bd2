@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registar evento</title>
+  </head>
+
+  <body>
+    <h1>Registar evento</h1>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Registar evento</button>
+    </form>
+
+    <p>
+      <a href="{% url 'listar_eventos' %}"> Voltar à lista de eventos </a>
+    </p>
+  </body>
+</html>

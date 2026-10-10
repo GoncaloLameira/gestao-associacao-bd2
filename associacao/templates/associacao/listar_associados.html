@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Associados</title>
+  </head>
+  <body>
+    <h1>Lista de Associados</h1>
+
+    <p>
+      <a href="{% url 'registar_associado' %}">Registar novo associado</a>
+    </p>
+
+    <table border="1" cellpadding="8">
+      <thead>
+        <tr>
+          <th>Número</th>
+          <th>Nome</th>
+          <th>NIF</th>
+          <th>Email</th>
+          <th>Data de adesão</th>
+          <th>Estado</th>
+          <th>Localidade</th>
+          <th>Associação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for associado in associados %}
+        <tr>
+          <td>{{ associado.1 }}</td>
+          <td>{{ associado.2 }}</td>
+          <td>{{ associado.3 }}</td>
+          <td>{{ associado.5 }}</td>
+          <td>{{ associado.7 }}</td>
+          <td>{{ associado.9 }}</td>
+          <td>{{ associado.15|default:"—" }}</td>
+          <td>{{ associado.16 }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8">Ainda não existem associados registados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
