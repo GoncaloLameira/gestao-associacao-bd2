@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Órgãos Sociais</title>
+  </head>
+  <body>
+    <h1>Órgãos Sociais</h1>
+
+    <p>
+      <a href="{% url 'registar_orgao_social' %}">
+        Registar novo órgão social
+      </a>
+    </p>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Associação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for orgao in orgaos %}
+        <tr>
+          <td>{{ orgao.0 }}</td>
+          <td>{{ orgao.1 }}</td>
+          <td>{{ orgao.2 }}</td>
+          <td>{{ orgao.3 }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">Nenhum órgão social registado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
