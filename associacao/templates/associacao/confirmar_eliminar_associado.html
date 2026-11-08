@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar associado{% endblock %}
+{% block sidebar_subtitle %}Administração{% endblock %}
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+{% block page_eyebrow %}Associados / Eliminação{% endblock %}
+{% block page_title %}Eliminar permanentemente{% endblock %}
+{% block page_description %}Confirme cuidadosamente a eliminação desta inscrição e dos respetivos registos.{% endblock %}
+
+{% block content %}
+<section class="form-card">
+  <div class="alert error">
+    <b>Ação irreversível</b>
+    <span>Vai eliminar permanentemente {{ associado.0 }} (NIF {{ associado.1 }}) desta associação, incluindo o histórico indicado abaixo.</span>
+  </div>
+
+  <h3 class="section-title">Registos que serão eliminados</h3>
+  <div class="detail-grid">
+    <div><span>Inscrição do associado</span><b>1</b></div>
+    <div><span>Quotas associadas</span><b>{{ total_quotas }}</b></div>
+    <div><span>Pagamentos</span><b>{{ total_pagamentos }}</b></div>
+    <div><span>Conciliações bancárias</span><b>{{ total_conciliacoes }}</b></div>
+    <div><span>Exercícios de cargos</span><b>{{ total_cargos }}</b></div>
+  </div>
+
+  <p class="muted">A conta global e eventuais inscrições noutras associações serão preservadas.</p>
+
+  <form method="post" class="inline-actions">
+    {% csrf_token %}
+    <input type="hidden" name="confirmar_eliminacao" value="SIM">
+    <button class="button danger" type="submit">Confirmo a eliminação permanente</button>
+    <a class="button" href="{% url 'listar_associados' %}">Cancelar</a>
+  </form>
+</section>
+{% endblock %}

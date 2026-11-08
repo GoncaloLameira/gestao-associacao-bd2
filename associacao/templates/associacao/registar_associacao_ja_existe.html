@@ -1,0 +1,20 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Associação já registada{% endblock %}
+
+{% block public_content %}
+<div class="form-card" style="max-width: 480px;">
+  <div class="card-centered" style="padding: 40px 24px;">
+    <div class="icon-emoji icon-emoji-lg mb-4">✓</div>
+    <h1 class="mb-3">Associação já registada</h1>
+    <p class="muted mb-5">
+      Já existe uma associação configurada no sistema.<br>
+      Para aceder, inicie sessão como Direção ou Associado.
+    </p>
+    <a href="{% url 'login' %}" class="button primary button-lg" style="min-width: 200px;">
+      Iniciar Sessão
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+  #conteudo-perfil[hidden], #form-perfil[hidden], #editar-perfil[hidden] { display: none !important; }
+</style>
+{% endblock %}
+
+{% block title %}O Meu Perfil{% endblock %}
+
+{% block sidebar_subtitle %}Portal do Associado{% endblock %}
+
+{% block topbar_subtitle %}Portal do Associado{% endblock %}
+
+{% block page_eyebrow %}{% if editing %}Editar perfil{% else %}O Meu Perfil{% endif %}{% endblock %}
+
+{% block page_title %}{% if editing %}Editar Perfil{% else %}O Meu Perfil{% endif %}{% endblock %}
+
+{% block page_description %}{% if editing %}Atualize os seus dados pessoais e contactos.{% else %}Consulte os seus dados pessoais e associativos.{% endif %}{% endblock %}
+
+{% block page_action %}
+<button class="button primary" type="button" id="editar-perfil" {% if editing %}hidden{% endif %}>Editar Perfil</button>
+{% endblock %}
+
+{% block sidebar_foot %}
+{{ associado.2 }} · Associado n.º {{ associado.1 }}
+<br />
+Conta individual
+{% endblock %}
+
+{% block content %}
+<div class="detail-stack" id="conteudo-perfil" {% if editing %}hidden{% endif %}>
+  <section class="card">
+    <h3>Informação pessoal</h3>
+    <div class="detail-grid">
+      <div><span>Nome completo</span><b>{{ associado.2 }}</b></div>
+      <div>
+        <span>Número de associado</span>
+        <b>{{ associado.1 }}</b>
+      </div>
+      <div>
+        <span>NIF</span>
+        <b>{{ associado.3 }}</b>
+      </div>
+      <div>
+        <span>Data de nascimento</span>
+        <b>{{ associado.4|date:"d/m/Y" }}</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Contactos</h3>
+    <div class="detail-grid">
+      <div>
+        <span>Email</span>
+        <b>{{ associado.5 }}</b>
+      </div>
+      <div>
+        <span>Telefone</span>
+        <b>{{ associado.6 }}</b>
+      </div>
+      <div>
+        <span>Morada</span>
+        <b>{{ associado.10 }} {{ associado.11 }}, {{ associado.12 }} {{ associado.13 }}</b>
+      </div>
+      <div>
+        <span>Localidade</span>
+        <b>{{ associado.16 }}</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Informação associativa</h3>
+    <div class="detail-grid">
+      <div>
+        <span>Data de adesão</span>
+        <b>{{ associado.7|date:"d/m/Y" }}</b>
+      </div>
+      <div>
+        <span>Estado do associado</span>
+        <b>{{ associado.9 }}</b>
+      </div>
+    </div>
+  </section>
+</div>
+
+<form class="form-card" method="post" novalidate id="form-perfil" {% if not editing %}hidden{% endif %}>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="alert error">{{ form.non_field_errors }}</div>{% endif %}
+  <h3 class="section-title">Editar dados pessoais</h3>
+  <div class="form-grid">
+    {% for field in form %}
+      {% if field.name != 'id_localidade' %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% if field.errors %}<span class="error-message">{{ field.errors.0 }}</span>{% endif %}</label>
+      {% else %}{{ field }}{% endif %}
+    {% endfor %}
+  </div>
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar alterações</button>
+    <button class="button" type="button" id="cancelar-edicao">Cancelar</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const formPerfil = document.getElementById('form-perfil');
+  const conteudoPerfil = document.getElementById('conteudo-perfil');
+  const editarPerfil = document.getElementById('editar-perfil');
+  editarPerfil?.addEventListener('click', () => {
+    window.location.href = `${window.location.pathname}?editar=1`;
+  });
+  document.getElementById('cancelar-edicao')?.addEventListener('click', () => {
+    window.location.href = window.location.pathname;
+  });
+
+  const codigoPostal = document.getElementById('id_codigo_postal');
+  const localidade = document.getElementById('id_localidade');
+  const idLocalidade = document.getElementById('id_id_localidade');
+  if (!codigoPostal || !localidade || !idLocalidade) return;
+
+  let pesquisaLocalidadeTimer;
+  async function preencherLocalidade() {
+    const codigo = codigoPostal.value.trim();
+    if (!/^\d{4}-\d{3}$/.test(codigo)) {
+      localidade.value = '';
+      idLocalidade.value = '';
+      return;
+    }
+    try {
+      const response = await fetch(`{% url 'localidade_por_codigo_postal' %}?codigo_postal=${encodeURIComponent(codigo)}`);
+      if (!response.ok) throw new Error('Falha na pesquisa do código postal');
+      const data = await response.json();
+      localidade.value = data.success ? data.nome_localidade : '';
+      idLocalidade.value = data.success ? data.id_localidade : '';
+    } catch (error) {
+      localidade.value = '';
+      idLocalidade.value = '';
+      console.error('Não foi possível obter a localidade:', error);
+    }
+  }
+
+  codigoPostal.addEventListener('input', () => {
+    const digits = codigoPostal.value.replace(/\D/g, '').slice(0, 7);
+    codigoPostal.value = digits.length > 4 ? `${digits.slice(0, 4)}-${digits.slice(4)}` : digits;
+    clearTimeout(pesquisaLocalidadeTimer);
+    if (codigoPostal.value.length === 8) {
+      pesquisaLocalidadeTimer = setTimeout(preencherLocalidade, 250);
+    } else {
+      localidade.value = '';
+      idLocalidade.value = '';
+    }
+  });
+  codigoPostal.addEventListener('change', preencherLocalidade);
+  codigoPostal.addEventListener('blur', preencherLocalidade);
+  if (codigoPostal.value.trim()) preencherLocalidade();
+});
+</script>
+{% endblock %}

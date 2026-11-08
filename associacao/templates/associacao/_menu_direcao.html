@@ -1,0 +1,113 @@
+<!-- Menu da Direção -->
+<li class="nav-group">
+  <span class="nav-caption">Geral</span>
+  <a href="{% url 'dashboard_direcao' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_direcao' %}active{% endif %}" {% if request.resolver_match.url_name == 'dashboard_direcao' %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+    </svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="{% url 'listar_associacoes' %}" class="nav-item {% if request.resolver_match.url_name == 'listar_associacoes' or request.resolver_match.url_name == 'editar_associacao' or request.resolver_match.url_name == 'eliminar_associacao' or request.resolver_match.url_name == 'registar_associacao' or request.resolver_match.url_name == 'portal_associacao' %}active{% endif %}" {% if request.resolver_match.url_name == 'listar_associacoes' or request.resolver_match.url_name == 'editar_associacao' or request.resolver_match.url_name == 'eliminar_associacao' or request.resolver_match.url_name == 'registar_associacao' or request.resolver_match.url_name == 'portal_associacao' %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+    </svg>
+    <span>Associação</span>
+  </a>
+</li>
+
+<li class="nav-group">
+  <span class="nav-caption">Gestão administrativa</span>
+  <a href="{% url 'listar_associados' %}" class="nav-item {% if '/associados/' in request.path %}active{% endif %}" {% if '/associados/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    <span>Associados</span>
+  </a>
+  <a href="{% url 'listar_documentos' %}" class="nav-item {% if '/documentos/' in request.path or '/tipos-documento/' in request.path %}active{% endif %}" {% if '/documentos/' in request.path or '/tipos-documento/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a1 1 0 0 0 1 1h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
+    </svg>
+    <span>Documentos</span>
+  </a>
+</li>
+
+<li class="nav-group">
+  <span class="nav-caption">Gestão organizacional</span>
+  <a href="{% url 'listar_orgaos_sociais' %}" class="nav-item {% if '/orgaos-sociais/' in request.path or '/cargos/' in request.path %}active{% endif %}" {% if '/orgaos-sociais/' in request.path or '/cargos/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+    </svg>
+    <span>Órgãos Sociais e Cargos</span>
+  </a>
+  <a href="{% url 'listar_mandatos' %}" class="nav-item {% if '/mandatos/' in request.path %}active{% endif %}" {% if '/mandatos/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    <span>Mandatos</span>
+  </a>
+  <a href="{% url 'passagem_posse' %}" class="nav-item {% if request.resolver_match.url_name == 'passagem_posse' %}active{% endif %}" {% if request.resolver_match.url_name == 'passagem_posse' %}aria-current="page"{% endif %}><span>Passagem de Posse</span></a>
+  <a href="{% url 'listar_exercicios_cargo' %}" class="nav-item {% if '/exercicios-cargo/' in request.path %}active{% endif %}" {% if '/exercicios-cargo/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+    <span>Exercícios de Cargo</span>
+  </a>
+  <a href="{% url 'listar_eventos' %}" class="nav-item {% if '/eventos/' in request.path %}active{% endif %}" {% if '/eventos/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>
+    </svg>
+    <span>Eventos</span>
+  </a>
+</li>
+
+<li class="nav-group">
+  <span class="nav-caption">Gestão financeira</span>
+  <a href="{% url 'listar_quotas' %}" class="nav-item {% if '/quotas/' in request.path or '/quotas-associado/' in request.path %}active{% endif %}" {% if '/quotas/' in request.path or '/quotas-associado/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v12"/>
+    </svg>
+    <span>Quotas</span>
+  </a>
+  <a href="{% url 'listar_pagamentos' %}" class="nav-item {% if '/pagamentos/' in request.path %}active{% endif %}" {% if '/pagamentos/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+    </svg>
+    <span>Pagamentos</span>
+  </a>
+  <a href="{% url 'listar_movimentos_nao_conciliados' %}" class="nav-item {% if '/movimentos-bancarios/conciliacao/' in request.path %}active{% endif %}" {% if '/movimentos-bancarios/conciliacao/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/>
+    </svg>
+    <span>Conciliação Bancária</span>
+  </a>
+  <a href="{% url 'listar_movimentos_bancarios' %}" class="nav-item {% if '/movimentos-bancarios/' in request.path and '/importar/' not in request.path and '/conciliacao/' not in request.path %}active{% endif %}" {% if '/movimentos-bancarios/' in request.path and '/importar/' not in request.path and '/conciliacao/' not in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/>
+    </svg>
+    <span>Movimentos Bancários</span>
+  </a>
+  <a href="{% url 'importar_movimentos_csv' %}" class="nav-item {% if '/movimentos-bancarios/importar/' in request.path %}active{% endif %}" {% if '/movimentos-bancarios/importar/' in request.path %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+    <span>Importar CSV</span>
+  </a>
+  <a href="{% url 'estatisticas' %}" class="nav-item {% if request.resolver_match.url_name == 'estatisticas' %}active{% endif %}" {% if request.resolver_match.url_name == 'estatisticas' %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/>
+    </svg>
+    <span>Estatísticas</span>
+  </a>
+</li>
+
+<li class="nav-group">
+  <span class="nav-caption">Sistema</span>
+  <a href="{% url 'alterar_palavra_passe' %}" class="nav-item {% if request.resolver_match.url_name == 'alterar_palavra_passe' %}active{% endif %}" {% if request.resolver_match.url_name == 'alterar_palavra_passe' %}aria-current="page"{% endif %}><span>Palavra-passe</span></a>
+  <a href="{% url 'auditoria' %}" class="nav-item {% if 'auditoria' in request.resolver_match.url_name %}active{% endif %}" {% if 'auditoria' in request.resolver_match.url_name %}aria-current="page"{% endif %}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+      <path d="m9 12 2 2 4-4"/>
+    </svg>
+    <span>Auditoria</span>
+  </a>
+</li>

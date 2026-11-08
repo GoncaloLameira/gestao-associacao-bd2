@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static dict_extras %}
+
+{% block title %}Movimentos Suspeitos{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários / Revisão{% endblock %}
+
+{% block page_title %}Movimentos suspeitos de duplicação{% endblock %}
+
+{% block page_description %}Movimentos que podem ser duplicatas legítimas - requerem revisão manual.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'importar_movimentos_csv' %}" class="button primary">Importar CSV</a>
+<a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button">Conciliação</a>
+<a href="{% url 'historico_conciliacoes' %}" class="button">Histórico</a>
+{% endblock %}
+
+{% block content %}
+<!-- Tabela de movimentos suspeitos -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Referência</th>
+        <th>ID Externo Banco</th>
+        <th>Hash Importação</th>
+        <th>Total com mesmos dados</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if suspeitos %}
+        {% for suspeito in suspeitos %}
+        <tr class="table-row-warning">
+          <td>{{ suspeito.1|date:"d/m/Y" }}</td>
+          <td>{{ suspeito.2|default:"—" }}</td>
+          <td class="{% if suspeito.3 < 0 %}table-value-negative{% else %}table-value-positive{% endif %}">
+            {% if suspeito.3 < 0 %}−{% else %}+{% endif %}{{ suspeito.3|floatformat:2 }} €
+          </td>
+          <td>{{ suspeito.4|default:"—" }}</td>
+          <td>{{ suspeito.5|default:"—" }}</td>
+          <td class="font-mono" style="font-size: 0.75rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ suspeito.6|default:"—" }}</td>
+          <td class="text-center">
+            <span class="badge warning">{{ suspeito.8 }}</span>
+          </td>
+          <td>
+            <a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button button-sm">Ver na conciliação</a>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="8" class="table-empty">
+            Não existem movimentos suspeitos de duplicação.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody  >
+  </table>
+
+  <p class="footnote">{{ suspeitos|length }} registos suspeitos</p>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+  <div class="card-header">
+    <h3>Sobre movimentos suspeitos</h3>
+  </div>
+  <div class="card-body">
+    <p>Estes movimentos foram marcados como <strong>suspeitos de duplicação</strong> porque têm a mesma data, valor e referência de outro movimento já existente, mas <strong>não possuem identificador bancário (ID externo do banco)</strong> que permita confirmar se são:</p>
+    <ul style="margin: 12px 0; padding-left: 24px;">
+      <li>Duplicatas reais (mesmo movimento importado duas vezes)</li>
+      <li>Movimentos legítimos idênticos (ex: duas transferências do mesmo valor, mesma data, mesma referência)</li>
+    </ul>
+    <p><strong>Ação recomendada:</strong></p>
+    <ol style="margin: 12px 0; padding-left: 24px;">
+      <li>Verificar no extrato bancário original se existem realmente dois movimentos idênticos</li>
+      <li>Se for duplicata: eliminar o movimento suspeito</li>
+      <li>Se for legítimo: manter ambos (o flag <code>suspeito_duplicado</code> serve apenas como aviso)</li>
+      <li>Para futuras importações, solicitar ao banco que inclua o ID único da transação no CSV</li>
+    </ol>
+    <p class="text-muted" style="font-size: 0.875rem;">
+      O hash de importação permite detetar reimportações do mesmo ficheiro. Movimentos com o mesmo hash são automaticamente ignorados como duplicados.
+    </p>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Início — Portal do Associado{% endblock %}
+
+{% block sidebar_subtitle %}Portal do Associado{% endblock %}
+
+{% block topbar_subtitle %}Portal do Associado{% endblock %}
+
+{% block page_eyebrow %}Início{% endblock %}
+
+{% block page_title %}Olá, {{ user.get_full_name }}{% endblock %}
+
+{% block page_description %}Bem-vindo à área de associado da {{ associacao_nome|default:"associação" }}.{% endblock %}
+
+{% block sidebar_foot %}
+{{ user.get_full_name }} · Associado n.º {{ user.numero_associado }}
+<br />
+Conta individual
+{% endblock %}
+
+{% block content %}
+<!-- Metrics for member -->
+<div class="metrics">
+  <article class="metric">
+    <span>Associados ativos</span>
+    <strong>{{ total_ativos }}</strong>
+    <small>Na {{ associacao_nome|default:"associação" }}</small>
+  </article>
+  <article class="metric">
+    <span>Próximo evento</span>
+    <strong>{{ proximo_evento_data|default:"—" }}</strong>
+    <small>{{ proximo_evento_nome|default:"—" }} · {{ proximo_evento_hora|default:"—" }}</small>
+  </article>
+  <article class="metric">
+    <span>As minhas quotas por pagar</span>
+    <strong>{{ quotas_resumo.pendentes }}</strong>
+    <small>{{ quotas_resumo.valor_pendente }} € no total · Inclui {{ quotas_resumo.vencidas }} vencida</small>
+  </article>
+</div>
+
+<!-- Two columns -->
+<div class="two-columns">
+  <section class="card">
+    <h3>Próximos eventos</h3>
+    {% if proximos_eventos %}
+      <h4>{{ proximos_eventos.0.1 }}</h4>
+      <p class="muted">
+        {{ proximos_eventos.0.2|date:"d/m/Y" }} · {{ proximos_eventos.0.2|date:"H:i" }}
+        <br />
+        {{ proximos_eventos.0.4|default:"—" }}
+      </p>
+      <a href="{% url 'portal_eventos' %}" class="text-link">
+        Consultar evento →
+      </a>
+    {% else %}
+      <h4>Sem eventos agendados</h4>
+      <p class="muted">Não existem eventos nos próximos 30 dias.</p>
+      <a href="{% url 'portal_eventos' %}" class="text-link">
+        Consultar evento →
+      </a>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h3>Resumo das minhas quotas</h3>
+    <h4>{{ quotas_resumo.valor_pendente }} € por pagar</h4>
+    <div class="progress">
+      <i style="width: {% if quotas_resumo.total > 0 %}{% widthratio quotas_resumo.pagas quotas_resumo.total 100 %}{% else %}0{% endif %}%;"></i>
+    </div>
+    <p class="muted">
+      {{ quotas_resumo.valor_vencido|floatformat:2 }} € em dívida · {{ quotas_resumo.valor_futuro|floatformat:2 }} € a vencer
+    </p>
+  </section>
+</div>
+
+<!-- Association info -->
+<section class="card">
+  <h3>Informações da associação</h3>
+  <p><strong>{{ associacao_nome }}</strong></p>
+  <p class="muted">
+    {{ associacao_email }} · {{ associacao_telefone }}
+    <br />
+    {{ associacao_morada }}, n.º {{ associacao_numero }} · {{ associacao_codigo_postal }} {{ associacao_localidade }}
+  </p>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animate progress bars on load
+  document.addEventListener('DOMContentLoaded', function() {
+    const progressBars = document.querySelectorAll('.progress i');
+    progressBars.forEach(function(bar) {
+      const targetWidth = bar.style.width;
+      bar.style.width = '0%';
+      requestAnimationFrame(function() {
+        bar.style.width = targetWidth;
+      });
+    });
+  });
+</script>
+{% endblock %}

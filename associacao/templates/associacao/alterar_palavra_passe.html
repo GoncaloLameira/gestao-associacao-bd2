@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Alterar palavra-passe{% endblock %}
+{% block page_eyebrow %}Segurança{% endblock %}
+{% block page_title %}Alterar palavra-passe{% endblock %}
+{% block page_description %}A alteração termina as sessões administrativas existentes.{% endblock %}
+{% block content %}
+<form method="post" class="form-card">{% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}</div>{% endfor %}
+  <button type="submit" class="button primary mt-3">Alterar palavra-passe</button>
+</form>
+{% endblock %}

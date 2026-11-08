@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}A Associação{% endblock %}
+
+{% block sidebar_subtitle %}Portal do Associado{% endblock %}
+
+{% block topbar_subtitle %}Portal do Associado{% endblock %}
+
+{% block page_eyebrow %}A Associação{% endblock %}
+
+{% block page_title %}A Associação{% endblock %}
+
+{% block page_description %}Informação institucional e contactos da sua associação.{% endblock %}
+
+{% block sidebar_foot %}
+{{ user.get_full_name }} · Associado n.º {{ user.numero_associado }}
+<br />
+Conta individual
+{% endblock %}
+
+{% block content %}
+<div class="detail-stack">
+  <section class="card">
+    <h3>{{ associacao.nome }}</h3>
+    <div class="detail-grid">
+      <div>
+        <span>Data de fundação</span>
+        <b>{{ associacao.data_fundacao|date:"d/m/Y"|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Localidade</span>
+        <b>{{ associacao.nome_localidade|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Associados ativos</span>
+        <b>{{ total_ativos|default:"—" }}</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Contactos e sede</h3>
+    <div class="detail-grid">
+      <div>
+        <span>Email</span>
+        <b>{{ associacao.email|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Telefone</span>
+        <b>{{ associacao.telefone|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Morada</span>
+        <b>
+          {% if associacao.tipo_via %}{{ associacao.tipo_via }} {{ associacao.nome_via }}{% else %}—{% endif %}
+          {% if associacao.numero_porta %}, n.º {{ associacao.numero_porta }}{% endif %}
+          {% if associacao.andar %} {{ associacao.andar }}{% endif %}
+        </b>
+      </div>
+      <div>
+        <span>Código postal e localidade</span>
+        <b>
+          {% if associacao.codigo_postal %}{{ associacao.codigo_postal }}{% endif %}
+          {% if associacao.nome_localidade %} {{ associacao.nome_localidade }}{% endif %}
+          {% if not associacao.codigo_postal and not associacao.nome_localidade %}—{% endif %}
+        </b>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Órgãos sociais em funções</h3>
+    {% if orgaos_sociais %}
+    <div class="detail-grid">
+      {% for orgao in orgaos_sociais %}
+      <div>
+        <span>{{ orgao.nome }}</span>
+        <b>{{ orgao.descricao|default:"—" }}</b>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted">Não existem órgãos sociais registados para o mandato atual.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

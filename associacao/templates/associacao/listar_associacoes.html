@@ -1,52 +1,93 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Associações</title>
-  </head>
+{% extends 'base.html' %}
+{% load static %}
 
-  <body>
-    <h1>Associações</h1>
+{% block title %}Associação{% endblock %}
 
-    <p>
-      <a href="{% url 'registar_associacao' %}"> Registar associação </a>
-    </p>
+{% block sidebar_subtitle %}Administração{% endblock %}
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>NIPC</th>
-          <th>Nome</th>
-          <th>Data de fundação</th>
-          <th>Email</th>
-          <th>Telefone</th>
-          <th>Localidade</th>
-        </tr>
-      </thead>
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
 
-      <tbody>
-        {% for associacao in associacoes %}
-        <tr>
-          <td>{{ associacao.0 }}</td>
-          <td>{{ associacao.1 }}</td>
-          <td>{{ associacao.2 }}</td>
-          <td>{{ associacao.3|date:"d/m/Y" }}</td>
-          <td>{{ associacao.4 }}</td>
-          <td>{{ associacao.5 }}</td>
-          <td>{{ associacao.11|default:"-" }}</td>
-        </tr>
+{% block page_eyebrow %}Associação{% endblock %}
 
-        {% empty %}
-        <tr>
-          <td colspan="7">Não existe nenhuma associação registada.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+{% block page_title %}Associação{% endblock %}
 
-    <p>
-      <a href="{% url 'listar_eventos' %}">Consultar eventos</a>
-    </p>
-  </body>
-</html>
+{% block page_description %}Dados institucionais e contactos da associação.{% endblock %}
+
+{% block page_action %}
+{% if associacao %}
+<a href="{% url 'editar_associacao' associacao.0 %}" class="button primary">
+  Editar associação
+</a>
+{% else %}
+<a href="{% url 'registar_associacao' %}" class="button primary">
+  Registar associação
+</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if associacao %}
+<div class="detail-stack">
+  <section class="card">
+    <h3>Identificação</h3>
+    <div class="detail-grid">
+      <div>
+        <span>Nome</span>
+        <b>{{ associacao.2|default:"—" }}</b>
+      </div>
+      <div>
+        <span>NIPC</span>
+        <b>{{ associacao.1|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Data de fundação</span>
+        <b>{{ associacao.3|date:"d/m/Y"|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Localidade</span>
+        <b>{{ associacao.11|default:"—" }}</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Contactos e sede</h3>
+    <div class="detail-grid">
+      <div>
+        <span>Email</span>
+        <b>{{ associacao.4|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Telefone</span>
+        <b>{{ associacao.5|default:"—" }}</b>
+      </div>
+      <div>
+        <span>Morada</span>
+        <b>
+          {% if associacao.7 %}{{ associacao.7 }}{% else %}—{% endif %}
+          {% if associacao.8 %} {{ associacao.8 }}{% endif %}
+          {% if associacao.9 %}, n.º {{ associacao.9 }}{% endif %}
+          {% if associacao.10 %} {{ associacao.10 }}{% endif %}
+        </b>
+      </div>
+      <div>
+        <span>Código postal</span>
+        <b>
+          {% if associacao.11 %}{{ associacao.11 }}{% endif %}
+          {% if associacao.13 %} {{ associacao.13 }}{% endif %}
+          {% if not associacao.11 and not associacao.13 %}—{% endif %}
+        </b>
+      </div>
+    </div>
+  </section>
+</div>
+{% else %}
+<div class="card card-centered">
+  <p class="muted">Não existe nenhuma associação registada.</p>
+  <a href="{% url 'registar_associacao' %}" class="button primary">
+    Registar associação
+  </a>
+</div>
+{% endif %}
+
+{% endblock %}

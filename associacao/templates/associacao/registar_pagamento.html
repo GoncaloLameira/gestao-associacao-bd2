@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registar pagamento{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Pagamentos / Registar{% endblock %}
+
+{% block page_title %}Registar pagamento{% endblock %}
+
+{% block page_description %}Registe um valor já recebido; este formulário não processa pagamentos online.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Associado <span class="required"></span>
+      <select name="{{ form.id_quota_associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for qa in form.id_quota_associado.field.queryset %}
+        <option value="{{ qa.pk }}">#{{ qa.associado.numero_associado }} {{ qa.associado.nome_completo }} — {{ qa.quota.designacao }} ({{ qa.quota.valor }} €)</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Quota por liquidar <span class="required"></span>
+      <select name="{{ form.id_quota_associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for qa in form.id_quota_associado.field.queryset %}
+        <option value="{{ qa.pk }}">{{ qa.quota.designacao }} — {{ qa.data_vencimento|date:"d/m/Y" }} — {{ qa.estado }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Data de pagamento <span class="required"></span>
+      <input type="date" name="{{ form.data_pagamento.name }}" placeholder="Data" required />
+    </label>
+    <label>
+      Valor recebido (€) <span class="required"></span>
+      <input type="number" name="{{ form.valor_pago.name }}" step="0.01" min="0" placeholder="0.00" required />
+    </label>
+    <label>
+      Método <span class="required"></span>
+      <select name="{{ form.metodo_pagamento.name }}" required>
+        <option value="">Selecione...</option>
+        <option value="Transferência">Transferência</option>
+        <option value="Numerário">Numerário</option>
+        <option value="Multibanco">Multibanco</option>
+        <option value="MB Way">MB Way</option>
+        <option value="Cheque">Cheque</option>
+      </select>
+    </label>
+    <label>
+      Referência
+      <input type="text" name="{{ form.referencia_pagamento.name }}" placeholder="Referência bancária (opcional)" />
+    </label>
+    <label>
+      Movimento bancário
+      <select name="{{ form.id_movimento.name }}">
+        <option value="">Sem movimento associado</option>
+        {% for mov in form.id_movimento.field.queryset %}
+        <option value="{{ mov.pk }}">{{ mov.data|date:"d/m/Y" }} — {{ mov.valor }} € — {{ mov.descricao }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_pagamentos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

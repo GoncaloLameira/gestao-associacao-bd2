@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tipos de Documento{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Tipos de Documento{% endblock %}
+
+{% block page_title %}Tipos de Documento{% endblock %}
+
+{% block page_description %}Categorias para classificar documentos da associação.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_tipo_documento' %}" class="button primary">
+  Registar tipo
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if tipos %}
+        {% for tipo in tipos %}
+        <tr>
+          <td>{{ tipo.1 }}</td>
+          <td>{{ tipo.2|default:"—" }}</td>
+          <td>
+            <a href="{% url 'editar_tipo_documento' tipo.0 %}" class="table-action">Editar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="3" class="table-empty">
+            Não existem tipos de documento registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ tipos|length }} registos</p>
+</div>
+
+{% endblock %}

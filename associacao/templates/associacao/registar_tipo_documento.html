@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registar tipo{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Tipos de Documento / Registar{% endblock %}
+
+{% block page_title %}Registar tipo{% endblock %}
+
+{% block page_description %}Crie uma nova categoria para classificar documentos.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Nome <span class="required"></span>
+      <input type="text" name="{{ form.nome_tipo_documento.name }}" placeholder="Nome do tipo" required />
+    </label>
+    <label class="wide">
+      Descrição
+      <textarea name="{{ form.descricao_tipo_documento.name }}" placeholder="Descrição (opcional)"></textarea>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_tipos_documento' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

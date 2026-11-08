@@ -1,21 +1,31 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Registar Mandato</title>
-  </head>
+{% extends 'base.html' %}
+{% load static %}
 
-  <body>
-    <h1>Registar Mandato</h1>
+{% block title %}Criar mandato{% endblock %}
 
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
+{% block sidebar_subtitle %}Administração{% endblock %}
 
-      <button type="submit">Registar</button>
-    </form>
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
 
-    <p>
-      <a href="{% url 'listar_mandatos' %}"> Consultar mandatos </a>
-    </p>
-  </body>
-</html>
+{% block page_eyebrow %}Mandatos / Criar{% endblock %}
+
+{% block page_title %}Criar mandato{% endblock %}
+
+{% block page_description %}Defina um novo período de mandato para os órgãos sociais.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  {{ form.non_field_errors }}
+  <div class="form-grid">
+    {% for field in form %}<label for="{{ field.id_for_label }}">{{ field.label }}{{ field }}{{ field.errors }}</label>{% endfor %}
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_mandatos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

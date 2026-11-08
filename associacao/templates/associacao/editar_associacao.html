@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar associação{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Associação / Editar{% endblock %}
+
+{% block page_title %}Editar associação{% endblock %}
+
+{% block page_description %}Atualize os dados institucionais da associação.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate id="form-associacao">
+  {% csrf_token %}
+
+  <div class="alert info">
+    <b>Informação</b>
+    <span>Os campos assinalados com * são obrigatórios. A palavra-passe não é alterada neste formulário.</span>
+  </div>
+
+  <section class="form-section" aria-labelledby="section-identificacao">
+    <header class="section-header">
+      <h2 id="section-identificacao">Identificação</h2>
+      <p>Dados principais da associação</p>
+    </header>
+    <div class="form-grid">
+      <label>
+        NIPC <span class="required" aria-hidden="true">*</span>
+        <input type="text" name="{{ form.nipc.name }}" value="{{ form.nipc.value|default:'' }}" placeholder="9 dígitos" maxlength="9" required inputmode="numeric" />
+        {% if form.nipc.errors %}
+        <span class="error-message">{{ form.nipc.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label>
+        Nome <span class="required" aria-hidden="true">*</span>
+        <input type="text" name="{{ form.nome.name }}" value="{{ form.nome.value|default:'' }}" placeholder="Nome da associação" required />
+        {% if form.nome.errors %}
+        <span class="error-message">{{ form.nome.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label>
+        Data de fundação
+        <input type="date" name="{{ form.data_fundacao.name }}" value="{{ form.data_fundacao.value|date:'Y-m-d'|default:'' }}" />
+        {% if form.data_fundacao.errors %}
+        <span class="error-message">{{ form.data_fundacao.errors.0 }}</span>
+        {% endif %}
+      </label>
+    </div>
+  </section>
+
+  <section class="form-section" aria-labelledby="section-contactos">
+    <header class="section-header">
+      <h2 id="section-contactos">Contactos</h2>
+      <p>Informação para contacto da associação</p>
+    </header>
+    <div class="form-grid">
+      <label>
+        Email
+        <input type="email" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}" placeholder="email@exemplo.pt" />
+        {% if form.email.errors %}
+        <span class="error-message">{{ form.email.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label>
+        Telefone
+        <input type="tel" name="{{ form.telefone.name }}" value="{{ form.telefone.value|default:'' }}" placeholder="+351 9XX XXX XXX" />
+        {% if form.telefone.errors %}
+        <span class="error-message">{{ form.telefone.errors.0 }}</span>
+        {% endif %}
+      </label>
+    </div>
+  </section>
+
+  <section class="form-section" aria-labelledby="section-morada">
+    <header class="section-header">
+      <h2 id="section-morada">Morada da Sede</h2>
+      <p>Endereço completo da associação</p>
+    </header>
+    <div class="form-grid">
+      <label>
+        Tipo de via
+        <div class="select-wrapper">
+          {{ form.tipo_via }}
+        </div>
+        {% if form.tipo_via.errors %}
+        <span class="error-message">{{ form.tipo_via.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label class="wide">
+        Nome da via <span class="required" aria-hidden="true">*</span>
+        <input type="text" name="{{ form.nome_via.name }}" value="{{ form.nome_via.value|default:'' }}" placeholder="Ex: das Flores" required />
+        {% if form.nome_via.errors %}
+        <span class="error-message">{{ form.nome_via.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label>
+        N.º <span class="required" aria-hidden="true">*</span>
+        <input type="text" name="{{ form.numero_porta.name }}" value="{{ form.numero_porta.value|default:'' }}" placeholder="Ex: 123" required />
+        {% if form.numero_porta.errors %}
+        <span class="error-message">{{ form.numero_porta.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label>
+        Andar
+        <input type="text" name="{{ form.andar.name }}" value="{{ form.andar.value|default:'' }}" placeholder="Ex: 2º Esq." />
+        {% if form.andar.errors %}
+        <span class="error-message">{{ form.andar.errors.0 }}</span>
+        {% endif %}
+      </label>
+      <label class="cp-group">
+        Código postal <span class="required" aria-hidden="true">*</span>
+        <div class="cp-input-wrapper">
+          <input type="text" name="{{ form.codigo_postal.name }}" id="id_codigo_postal" value="{{ form.codigo_postal.value|default:'' }}" placeholder="0000-000" required maxlength="8" pattern="\d{4}-\d{3}" title="Formato: 0000-000" autocomplete="off" />
+          <span class="cp-loading" id="cp-loading" aria-hidden="true"></span>
+        </div>
+        {% if form.codigo_postal.errors %}
+        <span class="error-message">{{ form.codigo_postal.errors.0 }}</span>
+        {% endif %}
+        <span class="hint">Formato: 0000-000</span>
+      </label>
+      <label class="wide">
+        Localidade <span class="required" aria-hidden="true">*</span>
+        {{ form.localidade }}
+        {{ form.id_localidade }}
+        {% if form.localidade.errors %}
+        <span class="error-message">{{ form.localidade.errors.0 }}</span>
+        {% endif %}
+        {% if form.id_localidade.errors %}
+        <span class="error-message">{{ form.id_localidade.errors.0 }}</span>
+        {% endif %}
+      </label>
+    </div>
+  </section>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar alterações</button>
+    <a href="{% url 'listar_associacoes' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const codigoPostalInput = document.getElementById('id_codigo_postal');
+    const localidadeInput = document.getElementById('id_localidade');
+    const idLocalidadeInput = document.getElementById('id_id_localidade');
+    const loadingIndicator = document.getElementById('cp-loading');
+    const apiUrl = "{% url 'localidade_por_codigo_postal' %}";
+
+    let debounceTimer = null;
+
+    // Pre-fill if editing
+    {% if form.localidade_nome %}
+    localidadeInput.value = "{{ form.localidade_nome|escapejs }}";
+    {% endif %}
+    {% if form.id_localidade.value %}
+    idLocalidadeInput.value = "{{ form.id_localidade.value }}";
+    {% endif %}
+
+    async function fetchLocalidade(cp) {
+        if (!cp || cp.length !== 8) return;
+
+        loadingIndicator.classList.add('visible');
+
+        try {
+            const response = await fetch(`${apiUrl}?codigo_postal=${encodeURIComponent(cp)}`);
+            const data = await response.json();
+
+            if (data.success) {
+                localidadeInput.value = data.nome_localidade;
+                idLocalidadeInput.value = data.id_localidade;
+                localidadeInput.classList.remove('error');
+                localidadeInput.classList.add('filled');
+            } else {
+                localidadeInput.value = '';
+                idLocalidadeInput.value = '';
+                localidadeInput.classList.remove('filled');
+                localidadeInput.classList.add('error');
+                localidadeInput.title = data.error;
+            }
+        } catch (error) {
+            console.error('Erro ao buscar localidade:', error);
+            localidadeInput.value = '';
+            idLocalidadeInput.value = '';
+            localidadeInput.classList.remove('filled');
+            localidadeInput.classList.add('error');
+        } finally {
+            loadingIndicator.classList.remove('visible');
+        }
+    }
+
+    if (codigoPostalInput) {
+        // Auto-format: insert dash after 4 digits
+        codigoPostalInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 4) {
+                value = value.substring(0, 4) + '-' + value.substring(4, 7);
+            }
+            this.value = value;
+
+            // Clear debounce timer
+            clearTimeout(debounceTimer);
+
+            // Trigger lookup after user stops typing (300ms)
+            if (value.length === 8) {
+                debounceTimer = setTimeout(() => fetchLocalidade(value), 300);
+            } else {
+                localidadeInput.value = '';
+                idLocalidadeInput.value = '';
+                localidadeInput.classList.remove('filled', 'error');
+            }
+        });
+
+        // Also trigger on blur (when user leaves field)
+        codigoPostalInput.addEventListener('blur', function() {
+            clearTimeout(debounceTimer);
+            if (this.value.length === 8) {
+                fetchLocalidade(this.value);
+            }
+        });
+
+        // Paste handling
+        codigoPostalInput.addEventListener('paste', function(e) {
+            setTimeout(() => {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 4) {
+                    value = value.substring(0, 4) + '-' + value.substring(4, 7);
+                }
+                this.value = value;
+                if (value.length === 8) {
+                    fetchLocalidade(value);
+                }
+            }, 0);
+        });
+    }
+});
+</script>
+{% endblock %}

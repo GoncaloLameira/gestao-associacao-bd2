@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar órgão{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Órgãos Sociais / Editar{% endblock %}
+
+{% block page_title %}Editar órgão{% endblock %}
+
+{% block page_description %}Atualize os dados do órgão social.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Nome <span class="required"></span>
+      <input type="text" name="{{ form.nome.name }}" value="{{ form.nome.value|default:'' }}" placeholder="Nome do órgão" required />
+    </label>
+    <label class="wide">
+      Descrição
+      <textarea name="{{ form.descricao.name }}" placeholder="Descrição do órgão (opcional)">{{ form.descricao.value|default:'' }}</textarea>
+    </label>
+    <label>
+      Associação <span class="required"></span>
+      <select name="{{ form.associacao.name }}" required>
+        <option value="">Selecione...</option>
+        {% for assoc in form.associacao.field.queryset %}
+        <option value="{{ assoc.pk }}" {% if form.associacao.value == assoc.pk %}selected{% endif %}>{{ assoc.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_orgaos_sociais' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

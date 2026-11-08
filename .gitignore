@@ -3,13 +3,21 @@
 
 # Credenciais locais
 dadosutilizador.py
+.env
 
 # Python
 __pycache__/
 *.pyc
+.pytest_cache/
 
 # macOS
 .DS_Store
 
 # VS Code
 .vscode/
+
+# Dados locais e artefactos de execução (manter fora do Git)
+cookies*.txt
+*.dump
+backups/
+media/

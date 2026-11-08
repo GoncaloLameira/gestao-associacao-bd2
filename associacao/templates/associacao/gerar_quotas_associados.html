@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gerar quotas{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Quotas / Gerar{% endblock %}
+
+{% block page_title %}Gerar quotas dos associados{% endblock %}
+
+{% block page_description %}Crie quotas em massa para todos os associados ativos.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Quota base <span class="required"></span>
+      <select name="{{ form.id_quota.name }}" required>
+        <option value="">Selecione...</option>
+        {% for quota in form.id_quota.field.queryset %}
+        <option value="{{ quota.pk }}">{{ quota.designacao }} ({{ quota.valor }} €)</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Data de vencimento inicial <span class="required"></span>
+      <input type="date" name="{{ form.data_vencimento_inicial.name }}" required />
+    </label>
+    <label>
+      Períodos (anos) <span class="required"></span>
+      <input type="number" name="{{ form.periodos.name }}" min="1" max="10" placeholder="Ex: 1" required />
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Gerar quotas</button>
+    <a href="{% url 'listar_quotas_associado' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

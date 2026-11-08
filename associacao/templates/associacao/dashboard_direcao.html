@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard — Direção{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Dashboard{% endblock %}
+
+{% block page_title %}Visão geral{% endblock %}
+
+{% block page_description %}A atividade da associação num relance · {% now "j \d\e F \d\e Y" %}{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_associado' %}" class="button primary">
+  Registar associado
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Metrics -->
+<div class="metrics">
+  <article class="metric">
+    <span>Associados ativos</span>
+    <strong>{{ total_ativos }}</strong>
+    <small>Situação atual da associação</small>
+  </article>
+  <article class="metric">
+    <span>Quotas pendentes</span>
+    <strong>{{ quotas_pendentes_count }}</strong>
+    <small>{{ total_pendente|floatformat:2 }} € por receber</small>
+  </article>
+  <article class="metric">
+    <span>Total recebido</span>
+    <strong>{{ total_recebido|floatformat:2 }} €</strong>
+    <small>{{ pagamentos_count }} pagamentos · {{ quotas_pagas }} quotas pagas</small>
+  </article>
+</div>
+
+<!-- Quick actions -->
+<div class="quick-actions">
+  <a href="{% url 'registar_associado' %}" class="button primary">
+    Registar associado
+  </a>
+  <a href="{% url 'registar_pagamento' %}" class="button">
+    Registar pagamento
+  </a>
+  <a href="{% url 'listar_quotas' %}" class="button">
+    Atribuir quota
+  </a>
+  <a href="{% url 'estatisticas' %}" class="button">
+    Consultar estatísticas
+  </a>
+</div>
+
+<!-- Two columns -->
+<div class="two-columns">
+  <section class="card">
+    <h3>Próximos eventos</h3>
+    {% if proximos_eventos %}
+      <h4>{{ proximos_eventos.0.1 }}</h4>
+      <p class="muted">
+        {{ proximos_eventos.0.2|date:"d/m/Y" }} · {{ proximos_eventos.0.2|date:"H:i" }}
+        <br />
+        {{ proximos_eventos.0.3|default:"—" }}
+      </p>
+      <a href="{% url 'listar_eventos' %}" class="text-link">
+        Consultar evento →
+      </a>
+    {% else %}
+      <h4>Sem eventos agendados</h4>
+      <p class="muted">Não existem eventos nos próximos 30 dias.</p>
+      <a href="{% url 'registar_evento' %}" class="text-link">
+        Criar evento →
+      </a>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h3>Estado das quotas</h3>
+    <h4>{{ quotas_pagas }} de {{ quotas_total }} quotas liquidadas</h4>
+    <div class="progress">
+      <i style="width: {% if quotas_total %}{% widthratio quotas_pagas quotas_total 100 %}{% else %}0{% endif %}%;"></i>
+    </div>
+    <p class="muted">
+      {% if quotas_total %}{% widthratio quotas_pagas quotas_total 100 as percent %}{{ percent }}{% else %}0{% endif %}% liquidadas
+    </p>
+  </section>
+</div>
+
+<!-- Recent payments -->
+<section class="card">
+  <h3>Pagamentos recentes</h3>
+  {% if pagamentos_recentes %}
+    <div class="table-wrap compact">
+      <table>
+        <thead>
+          <tr>
+            <th>Pagamento</th>
+            <th>Associado</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Método</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pag in pagamentos_recentes|slice:":5" %}
+          <tr>
+            <td>{{ pag.0 }}</td>
+            <td>#{{ pag.4 }} - {{ pag.5 }}</td>
+            <td>{{ pag.1|date:"d/m/Y" }}</td>
+            <td>{{ pag.2|floatformat:2 }} €</td>
+            <td>{{ pag.3 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="footnote">{{ pagamentos_recentes|length }} registos</p>
+  {% else %}
+    <p class="muted">Ainda não foram registados pagamentos.</p>
+  {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animate progress bars on load
+  document.addEventListener('DOMContentLoaded', function() {
+    const progressBars = document.querySelectorAll('.progress i');
+    progressBars.forEach(function(bar) {
+      const targetWidth = bar.style.width;
+      bar.style.width = '0%';
+      requestAnimationFrame(function() {
+        bar.style.width = targetWidth;
+      });
+    });
+  });
+</script>
+{% endblock %}

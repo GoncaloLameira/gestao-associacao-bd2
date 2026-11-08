@@ -1,0 +1,285 @@
+{% extends 'base_publico.html' %}
+{% load static %}
+
+{% block title %}Iniciar sessão — Gestão de Associações{% endblock %}
+
+{% block login_shell_class %}register-hybrid{% endblock %}
+
+{% block login_brand %}
+<section class="login-brand register-brand">
+  <div class="registration-brand">
+    <div class="brand-mark">GA</div>
+    <div>
+      <h1>Iniciar sessão</h1>
+      <p>Aceda à sua área reservada para gerir a associação.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block public_content %}
+<form class="login-form" method="post" novalidate id="login-form">
+  {% csrf_token %}
+
+  <!-- Hidden input for login type (single instance) -->
+  <input type="hidden" name="login_type" value="{{ login_type }}" id="id_login_type">
+
+  <!-- Tabs para alternar entre Associado e Associação -->
+  <div class="login-tabs" role="tablist" aria-label="Tipo de login">
+    <button type="button" class="login-tab {% if login_type == 'associado' %}active{% endif %}" role="tab" aria-selected="{% if login_type == 'associado' %}true{% else %}false{% endif %}" aria-controls="panel-associado" id="tab-associado" data-tab="associado">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>Associado</span>
+    </button>
+    <button type="button" class="login-tab {% if login_type == 'associacao' %}active{% endif %}" role="tab" aria-selected="{% if login_type == 'associacao' %}true{% else %}false{% endif %}" aria-controls="panel-associacao" id="tab-associacao" data-tab="associacao">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+      </svg>
+      <span>Associação</span>
+    </button>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}success{% else %}error{% endif %}">
+        <b>{% if message.tags == 'success' %}Sucesso{% else %}Erro{% endif %}</b>
+        <span>{{ message }}</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if errors.auth %}
+    <div class="alert error">
+      <b>Erro</b>
+      <span>{{ errors.auth }}</span>
+    </div>
+  {% endif %}
+
+  <!-- Painel Associado -->
+  <div class="login-panel {% if login_type == 'associado' %}active{% endif %}" id="panel-associado" role="tabpanel" aria-labelledby="tab-associado" {% if login_type != 'associado' %}hidden{% endif %}>
+    <label>
+      NIPC da associação
+      <div class="input-with-icon">
+        <input
+          type="text"
+          name="associacao_nipc"
+          id="id_associacao_nipc_associado"
+          autocomplete="organization"
+          placeholder="Necessário se o NIF existir noutra associação"
+          maxlength="9"
+          inputmode="numeric"
+          value="{{ request.POST.associacao_nipc|default:'' }}"
+          {% if login_type != 'associado' %}disabled{% endif %} />
+        <span class="input-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 10h.01M15 10h.01" /></svg>
+        </span>
+      </div>
+    </label>
+    <label>
+      NIF <span class="required" aria-hidden="true">*</span>
+      <div class="input-with-icon">
+        <input
+          type="text"
+          name="nif"
+          id="id_nipc_associado"
+          autocomplete="username"
+          required
+          autofocus
+          placeholder="9 dígitos"
+          maxlength="9"
+          inputmode="numeric"
+          value="{% firstof request.POST.nif request.POST.nipc %}"
+          {% if login_type != 'associado' %}disabled{% endif %} />
+        <span class="input-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+            <path d="M8 21h8"></path>
+            <path d="M12 17v4"></path>
+          </svg>
+        </span>
+      </div>
+      {% if errors.nif %}
+        <span class="error-message">{{ errors.nif }}</span>
+      {% endif %}
+    </label>
+
+    <label class="password-field">
+      Palavra-passe <span class="required" aria-hidden="true">*</span>
+      <div class="input-with-icon">
+        <input
+          type="password"
+          name="password_associado"
+          id="id_password_associado"
+          autocomplete="current-password"
+          required
+          placeholder="••••••••"
+          {% if login_type != 'associado' %}disabled{% endif %} />
+        <button type="button" class="password-toggle" aria-label="Mostrar palavra-passe" data-target="id_password_associado">
+          <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+      {% if errors.password %}
+        <span class="error-message">{{ errors.password }}</span>
+      {% endif %}
+    </label>
+
+    <button class="button primary full-width" type="submit">Iniciar sessão</button>
+  </div>
+
+  <!-- Painel Associação -->
+  <div class="login-panel {% if login_type == 'associacao' %}active{% endif %}" id="panel-associacao" role="tabpanel" aria-labelledby="tab-associacao" {% if login_type != 'associacao' %}hidden{% endif %}>
+    <label>
+      NIPC <span class="required" aria-hidden="true">*</span>
+      <div class="input-with-icon">
+        <input
+          type="text"
+          name="nipc"
+          id="id_nipc_associacao"
+          autocomplete="username"
+          required
+          placeholder="9 dígitos"
+          maxlength="9"
+          inputmode="numeric"
+          value="{{ request.POST.nipc|default:'' }}"
+          {% if login_type != 'associacao' %}disabled{% endif %} />
+        <span class="input-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+        </span>
+      </div>
+      {% if errors.nipc %}
+        <span class="error-message">{{ errors.nipc }}</span>
+      {% endif %}
+    </label>
+
+    <label class="password-field">
+      Palavra-passe <span class="required" aria-hidden="true">*</span>
+      <div class="input-with-icon">
+        <input
+          type="password"
+          name="password_associacao"
+          id="id_password_associacao"
+          autocomplete="current-password"
+          required
+          placeholder="••••••••"
+          {% if login_type != 'associacao' %}disabled{% endif %} />
+        <button type="button" class="password-toggle" aria-label="Mostrar palavra-passe" data-target="id_password_associacao">
+          <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+      {% if errors.password %}
+        <span class="error-message">{{ errors.password }}</span>
+      {% endif %}
+    </label>
+
+    <button class="button primary full-width" type="submit">Iniciar sessão</button>
+  </div>
+
+  <small class="login-hint">
+    A área é identificada automaticamente pelo tab selecionado.
+  </small>
+
+  <hr>
+
+  <div class="text-center">
+    <p class="muted mb-3">
+      Ainda não existe nenhuma associação registada?
+    </p>
+    <a href="{% url 'registar_associacao_publico' %}" class="button primary">
+      Registar Associação
+    </a>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabs = document.querySelectorAll('.login-tab');
+    const panels = document.querySelectorAll('.login-panel');
+    const loginTypeInput = document.getElementById('id_login_type');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+
+            // Update tabs
+            tabs.forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
+            this.classList.add('active');
+            this.setAttribute('aria-selected', 'true');
+
+            // Update panels
+            panels.forEach(panel => {
+                const active = panel.id === 'panel-' + targetTab;
+                panel.classList.toggle('active', active);
+                panel.hidden = !active;
+                panel.querySelectorAll('input').forEach(input => {
+                    input.disabled = !active;
+                });
+            });
+
+            // Update hidden input
+            loginTypeInput.value = targetTab;
+
+            // Focus the first input in the active panel
+            const activeInput = document.querySelector(
+              '#panel-' + targetTab + ' input[name="' + (targetTab === 'associado' ? 'nif' : 'nipc') + '"]'
+            );
+            if (activeInput) activeInput.focus();
+        });
+    });
+
+    // Password toggle
+    const passwordToggles = document.querySelectorAll('.password-toggle');
+    passwordToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const passwordInput = document.getElementById(targetId);
+            const eyeIcon = this.querySelector('.icon-eye');
+            const eyeOffIcon = this.querySelector('.icon-eye-off');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+                this.setAttribute('aria-label', 'Ocultar palavra-passe');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+                this.setAttribute('aria-label', 'Mostrar palavra-passe');
+            }
+        });
+    });
+
+    // NIF e NIPC têm nove dígitos numéricos.
+    const identificationInputs = document.querySelectorAll('input[name="nipc"], input[name="nif"], input[name="associacao_nipc"]');
+    identificationInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').substring(0, 9);
+        });
+    });
+});
+</script>
+{% endblock %}

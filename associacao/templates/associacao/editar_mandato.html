@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar mandato{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Mandatos / Editar{% endblock %}
+
+{% block page_title %}Editar mandato{% endblock %}
+
+{% block page_description %}Atualize os dados do mandato.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Designação <span class="required"></span>
+      <input type="text" name="{{ form.designacao.name }}" value="{{ form.designacao.value|default:'' }}" placeholder="Ex: 2025–2027" required />
+    </label>
+    <label>
+      Data de início <span class="required"></span>
+      <input type="date" name="{{ form.data_inicio.name }}" value="{{ form.data_inicio.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Data de fim <span class="required"></span>
+      <input type="date" name="{{ form.data_fim.name }}" value="{{ form.data_fim.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Associação <span class="required"></span>
+      <select name="{{ form.associacao.name }}" required>
+        <option value="">Selecione...</option>
+        {% for assoc in form.associacao.field.queryset %}
+        <option value="{{ assoc.pk }}" {% if form.associacao.value == assoc.pk %}selected{% endif %}>{{ assoc.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_mandatos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

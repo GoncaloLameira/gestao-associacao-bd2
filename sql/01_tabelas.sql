@@ -10,7 +10,9 @@
 
 CREATE TABLE localidade (
     id_localidade INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nome_localidade VARCHAR(100) NOT NULL UNIQUE
+    nome_localidade VARCHAR(100) NOT NULL,
+    codigo_postal VARCHAR(8) NOT NULL,
+    UNIQUE (nome_localidade, codigo_postal)
 );
 
 
@@ -211,7 +213,21 @@ CREATE TABLE movimento_bancario (
     data_movimento DATE NOT NULL,
     descricao_movimento VARCHAR(255),
     valor_movimento NUMERIC(10,2) NOT NULL,
-    referencia_movimento VARCHAR(100)
+    referencia_movimento VARCHAR(100),
+    id_associacao INTEGER NOT NULL,
+    -- Identificador único do movimento no banco (ex: ID da transação no extrato)
+    -- Permite deduplicação fiável ao reimportar o mesmo ficheiro
+    id_externo_banco VARCHAR(100),
+    -- Hash da linha CSV original para detetar reimportações do mesmo ficheiro
+    hash_importacao VARCHAR(64),
+    -- Flag para movimentos que podem ser duplicados legítimos (mesma data, valor, referência)
+    -- mas sem identificador bancário fiável - requer revisão manual
+    suspeito_duplicado BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT fk_movimento_bancario_associacao
+        FOREIGN KEY (id_associacao)
+        REFERENCES associacao(id_associacao),
+    -- Unique constraint para idempotência por identificador bancário
+    UNIQUE (id_associacao, id_externo_banco)
 );
 
 

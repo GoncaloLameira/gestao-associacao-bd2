@@ -1,42 +1,97 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Mandatos</title>
-  </head>
+{% extends 'base.html' %}
+{% load static %}
 
-  <body>
-    <h1>Mandatos</h1>
+{% block title %}Mandatos{% endblock %}
 
-    <p>
-      <a href="{% url 'registar_mandato' %}"> Registar novo mandato </a>
-    </p>
+{% block sidebar_subtitle %}Administração{% endblock %}
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Associação</th>
-          <th>Data de início</th>
-          <th>Data de fim</th>
-        </tr>
-      </thead>
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
 
-      <tbody>
+{% block page_eyebrow %}Mandatos{% endblock %}
+
+{% block page_title %}Mandatos{% endblock %}
+
+{% block page_description %}Períodos de exercício e composição dos órgãos sociais.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_mandato' %}" class="button primary">
+  Criar mandato
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Metrics -->
+<div class="metrics">
+  <article class="metric">
+    <span>Mandatos ativos</span>
+    <strong>{{ mandatos_ativos }}</strong>
+    <small>Períodos em vigor</small>
+  </article>
+  <article class="metric">
+    <span>Mandatos encerrados</span>
+    <strong>{{ mandatos_encerrados }}</strong>
+    <small>Períodos concluídos</small>
+  </article>
+  <article class="metric">
+    <span>Total de mandatos</span>
+    <strong>{{ mandatos|length }}</strong>
+    <small>Histórico completo</small>
+  </article>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Mandato</th>
+        <th>Início</th>
+        <th>Fim</th>
+        <th>Estado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if mandatos %}
         {% for mandato in mandatos %}
         <tr>
-          <td>{{ mandato.0 }}</td>
-          <td>{{ mandato.4 }}</td>
+          <td>{{ mandato.0|default:mandato.3 }}</td>
           <td>{{ mandato.1|date:"d/m/Y" }}</td>
           <td>{{ mandato.2|date:"d/m/Y" }}</td>
-        </tr>
-
-        {% empty %}
-        <tr>
-          <td colspan="4">Não existem mandatos registados.</td>
+          <td>
+            <span class="status {% if mandato.4 %}success{% else %}warning{% endif %}">
+              {% if mandato.4 %}Em vigor{% else %}Encerrado{% endif %}
+            </span>
+          </td>
+          <td>
+            <a href="{% url 'detalhe_mandato' mandato.0 %}" class="table-action">Consultar</a>
+          </td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Não existem mandatos registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ mandatos|length }} registos</p>
+</div>
+
+{% endblock %}

@@ -1,61 +1,80 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Exercícios de Cargo</title>
-  </head>
+{% extends 'base.html' %}
+{% load static %}
 
-  <body>
-    <h1>Exercícios de Cargo</h1>
+{% block title %}Exercícios de Cargo{% endblock %}
 
-    <p>
-      <a href="{% url 'registar_exercicio_cargo' %}">
-        Registar novo exercício de cargo
-      </a>
-    </p>
+{% block sidebar_subtitle %}Administração{% endblock %}
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Associado</th>
-          <th>Cargo</th>
-          <th>Órgão Social</th>
-          <th>Mandato</th>
-          <th>Data de início</th>
-          <th>Data de fim</th>
-        </tr>
-      </thead>
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
 
-      <tbody>
+{% block page_eyebrow %}Exercícios de Cargo{% endblock %}
+
+{% block page_title %}Exercícios de Cargo{% endblock %}
+
+{% block page_description %}Registo de exercício de cargos nos órgãos sociais.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_exercicio_cargo' %}" class="button primary">
+  Registar exercício
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Associado</th>
+        <th>Cargo</th>
+        <th>Órgão Social</th>
+        <th>Mandato</th>
+        <th>Início</th>
+        <th>Fim</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if exercicios %}
         {% for exercicio in exercicios %}
         <tr>
-          <td>{{ exercicio.0 }}</td>
-
           <td>{{ exercicio.4 }}</td>
-
           <td>{{ exercicio.6 }}</td>
-
           <td>{{ exercicio.8 }}</td>
-
-          <td>
-            {{ exercicio.10|date:"d/m/Y" }} - {{ exercicio.11|date:"d/m/Y" }}
-          </td>
-
+          <td>{{ exercicio.10 }}</td>
           <td>{{ exercicio.1|date:"d/m/Y" }}</td>
-
+          <td>{{ exercicio.2|date:"d/m/Y"|default:"Em exercício" }}</td>
           <td>
-            {% if exercicio.2 %} {{ exercicio.2|date:"d/m/Y" }} {% else %} Em
-            exercício {% endif %}
+            <span class="status {% if not exercicio.2 %}success{% else %}warning{% endif %}">
+              {% if not exercicio.2 %}Em exercício{% else %}Concluído{% endif %}
+            </span>
           </td>
-        </tr>
-
-        {% empty %}
-        <tr>
-          <td colspan="7">Não existem exercícios de cargo registados.</td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+      {% else %}
+        <tr>
+          <td colspan="7" class="table-empty">
+            Não existem exercícios de cargo registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ exercicios|length }} registos</p>
+</div>
+
+{% endblock %}

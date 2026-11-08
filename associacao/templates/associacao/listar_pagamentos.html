@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pagamentos{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Pagamentos{% endblock %}
+
+{% block page_title %}Pagamentos{% endblock %}
+
+{% block page_description %}Registo interno dos montantes recebidos para liquidação de quotas.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_pagamento' %}" class="button primary">
+  Registar pagamento
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Metrics -->
+<div class="metrics">
+  <article class="metric">
+    <span>Total recebido</span>
+    <strong>{{ total_recebido|floatformat:2 }} €</strong>
+    <small>{{ total_pagamentos }} pagamentos · {{ total_quotas_pagas }} quotas liquidadas</small>
+  </article>
+  <article class="metric">
+    <span>Método mais usado</span>
+    <strong>{{ metodo_mais_usado }}</strong>
+    <small>{{ perc_metodo_mais_usado }}% dos pagamentos</small>
+  </article>
+  <article class="metric">
+    <span>Último pagamento</span>
+    <strong>{% if ultimo_pagamento_data %}{{ ultimo_pagamento_data|date:"d/m/Y" }}{% else %}—{% endif %}</strong>
+    <small>{{ ultimo_pagamento_associado }}</small>
+  </article>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Pagamento</th>
+        <th>Associado</th>
+        <th>Data</th>
+        <th>Valor</th>
+        <th>Método</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if pagamentos %}
+        {% for pagamento in pagamentos %}
+        <tr>
+          <td>{{ pagamento.0 }}</td>
+          <td>#{{ pagamento.9 }} {{ pagamento.10 }}</td>
+          <td>{{ pagamento.1|date:"d/m/Y" }}</td>
+          <td>{{ pagamento.2|floatformat:2 }} €</td>
+          <td>{{ pagamento.3 }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Não existem pagamentos registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ pagamentos|length }} registos</p>
+</div>
+
+{% endblock %}

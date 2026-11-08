@@ -1,23 +1,202 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Registar associação</title>
-  </head>
+{% extends 'base_publico.html' %}
+{% load static %}
 
-  <body>
+{% block title %}Registar associação{% endblock %}
+
+{% block login_shell_class %}register-hybrid{% endblock %}
+
+{% block login_brand %}
+<section class="login-brand register-brand">
+  <div class="brand-mark">Gestão de Associações</div>
+  <div>
     <h1>Registar associação</h1>
+    <p>Crie o registo institucional da nova associação preenchendo os dados abaixo.</p>
+  </div>
+</section>
+{% endblock %}
 
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
+{% block public_content %}
+<div class="register-form-wrap">
+  <form class="register-form" method="post" novalidate id="form-associacao">
+    {% csrf_token %}
 
-      <button type="submit">Registar associação</button>
-    </form>
+    <section class="form-section" aria-labelledby="section-identificacao">
+      <header class="section-header">
+        <h2 id="section-identificacao">Identificação</h2>
+        <p>Dados principais da associação</p>
+      </header>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.nome.id_for_label }}">Nome <span class="required" aria-hidden="true">*</span></label>
+          {{ form.nome }}
+          {% if form.nome.errors %}
+          <span class="field-error">{{ form.nome.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.nipc.id_for_label }}">NIPC <span class="required" aria-hidden="true">*</span></label>
+          {{ form.nipc }}
+          {% if form.nipc.errors %}
+          <span class="field-error">{{ form.nipc.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.data_fundacao.id_for_label }}">Data de fundação</label>
+          {{ form.data_fundacao }}
+          {% if form.data_fundacao.errors %}
+          <span class="field-error">{{ form.data_fundacao.errors.0 }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </section>
 
-    <p>
-      <a href="{% url 'listar_associacoes' %}">
-        Voltar à lista de associações
-      </a>
-    </p>
-  </body>
-</html>
+    <section class="form-section" aria-labelledby="section-contactos">
+      <header class="section-header">
+        <h2 id="section-contactos">Contactos & Acesso</h2>
+        <p>Informação para contacto e credenciais</p>
+      </header>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.email.id_for_label }}">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+          <span class="field-error">{{ form.email.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+          {{ form.telefone }}
+          {% if form.telefone.errors %}
+          <span class="field-error">{{ form.telefone.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.password.id_for_label }}">Palavra-passe <span class="required" aria-hidden="true">*</span></label>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              name="{{ form.password.name }}"
+              id="{{ form.password.id_for_label }}"
+              autocomplete="new-password"
+              required
+              placeholder="••••••••"
+              {% if form.password.value %}value="{{ form.password.value }}"{% endif %}
+            />
+            <button type="button" class="password-toggle" aria-label="Mostrar palavra-passe" data-target="{{ form.password.id_for_label }}" tabindex="-1">
+              <svg class="icon-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="icon-eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          {% if form.password.errors %}
+          <span class="field-error">{{ form.password.errors.0 }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section" aria-labelledby="section-morada">
+      <header class="section-header">
+        <h2 id="section-morada">Morada da Sede</h2>
+        <p>Endereço completo da associação</p>
+      </header>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.tipo_via.id_for_label }}">Tipo de via</label>
+          <div class="select-wrapper">
+            {{ form.tipo_via }}
+          </div>
+          {% if form.tipo_via.errors %}
+          <span class="field-error">{{ form.tipo_via.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.nome_via.id_for_label }}">Nome da via <span class="required" aria-hidden="true">*</span></label>
+          {{ form.nome_via }}
+          {% if form.nome_via.errors %}
+          <span class="field-error">{{ form.nome_via.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.numero_porta.id_for_label }}">N.º <span class="required" aria-hidden="true">*</span></label>
+          {{ form.numero_porta }}
+          {% if form.numero_porta.errors %}
+          <span class="field-error">{{ form.numero_porta.errors.0 }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="{{ form.andar.id_for_label }}">Andar</label>
+          {{ form.andar }}
+          {% if form.andar.errors %}
+          <span class="field-error">{{ form.andar.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.codigo_postal.id_for_label }}">Código postal <span class="required" aria-hidden="true">*</span></label>
+          <div class="cp-wrapper">
+            {{ form.codigo_postal }}
+            <span class="cp-loading" aria-hidden="true"></span>
+          </div>
+          <span class="field-hint">Formato: 0000-000</span>
+          {% if form.codigo_postal.errors %}
+          <span class="field-error">{{ form.codigo_postal.errors.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.localidade.id_for_label }}">Localidade <span class="required" aria-hidden="true">*</span></label>
+          {{ form.localidade }}
+          {{ form.id_localidade }}
+          {% if form.localidade.errors %}
+          <span class="field-error">{{ form.localidade.errors.0 }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <div class="form-actions">
+      {% if publico %}
+      <a href="{% url 'login' %}" class="btn btn-secondary">Cancelar</a>
+      {% else %}
+      <a href="{% url 'listar_associacoes' %}" class="btn btn-secondary">Cancelar</a>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">Criar associação</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle
+    const passwordToggles = document.querySelectorAll('.password-toggle');
+    passwordToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const passwordInput = document.getElementById(targetId);
+            const eyeIcon = this.querySelector('.icon-eye');
+            const eyeOffIcon = this.querySelector('.icon-eye-off');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+                this.setAttribute('aria-label', 'Ocultar palavra-passe');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+                this.setAttribute('aria-label', 'Mostrar palavra-passe');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

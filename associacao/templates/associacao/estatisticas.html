@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Estatísticas{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Gestão financeira{% endblock %}
+
+{% block page_title %}Estatísticas{% endblock %}
+
+{% block page_description %}Indicadores calculados a partir dos dados da associação.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card"><span>Total de associados</span><strong>{{ total_associados }}</strong></div>
+  <div class="stat-card"><span>Associados ativos</span><strong>{{ associados_ativos }}</strong></div>
+  <div class="stat-card"><span>Associados inativos</span><strong>{{ associados_inativos }}</strong></div>
+  <div class="stat-card"><span>Quotas pagas</span><strong>{{ quotas_pagas }}</strong></div>
+  <div class="stat-card"><span>Quotas pendentes</span><strong>{{ quotas_pendentes }}</strong></div>
+  <div class="stat-card"><span>Quotas em dívida</span><strong>{{ quotas_divida }}</strong></div>
+  <div class="stat-card"><span>Pagamentos recebidos</span><strong>{{ total_pagamentos }} €</strong></div>
+  <div class="stat-card"><span>Movimentos por conciliar</span><strong>{{ movimentos_por_conciliar }}</strong></div>
+</div>
+<div class="table-card mt-4">
+  <h2 class="mb-3">Evolução mensal dos pagamentos</h2>
+  <table><thead><tr><th>Mês</th><th>Total recebido</th></tr></thead><tbody>
+    {% for pagamento in pagamentos_mensais %}<tr><td>{{ pagamento.mes|date:"m/Y" }}</td><td>{{ pagamento.total }} €</td></tr>
+    {% empty %}<tr><td colspan="2">Ainda não existem pagamentos registados.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}

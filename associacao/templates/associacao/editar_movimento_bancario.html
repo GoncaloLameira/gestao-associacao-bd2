@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar movimento{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários / Editar{% endblock %}
+
+{% block page_title %}Editar movimento{% endblock %}
+
+{% block page_description %}Atualize os dados do movimento bancário.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Data <span class="required"></span>
+      <input type="date" name="{{ form.data_movimento.name }}" value="{{ form.data_movimento.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Descrição <span class="required"></span>
+      <input type="text" name="{{ form.descricao_movimento.name }}" value="{{ form.descricao_movimento.value|default:'' }}" placeholder="Descrição do movimento" required />
+    </label>
+    <label>
+      Valor (€) <span class="required"></span>
+      <input type="number" name="{{ form.valor_movimento.name }}" step="0.01" value="{{ form.valor_movimento.value|default:'' }}" placeholder="0.00" required />
+    </label>
+    <label>
+      Referência
+      <input type="text" name="{{ form.referencia_movimento.name }}" value="{{ form.referencia_movimento.value|default:'' }}" placeholder="Referência bancária (opcional)" />
+    </label>
+    <label>
+      Pagamento relacionado
+      <select name="{{ form.id_pagamento.name }}">
+        <option value="">Sem pagamento associado</option>
+        {% for pag in form.id_pagamento.field.queryset %}
+        <option value="{{ pag.pk }}" {% if form.id_pagamento.value == pag.pk %}selected{% endif %}>{{ pag.data_pagamento|date:"d/m/Y" }} — {{ pag.valor_pago }} €</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_movimentos_bancarios' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

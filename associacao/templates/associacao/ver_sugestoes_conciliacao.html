@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sugestões de Conciliação{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários / Conciliação{% endblock %}
+
+{% block page_title %}Sugestões para conciliação{% endblock %}
+
+{% block page_description %}Selecione o pagamento correspondente ao movimento bancário.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button">Voltar</a>
+{% endblock %}
+
+{% block content %}
+<!-- Detalhes do movimento -->
+<div class="form-card" style="max-width: 900px; margin-bottom: 24px;">
+  <h3 class="section-title">Movimento bancário</h3>
+
+  <div class="form-grid">
+    <label>
+      Data
+      <input type="text" value="{{ movimento.1|date:'d/m/Y' }}" readonly />
+    </label>
+    <label>
+      Descrição
+      <input type="text" value="{{ movimento.2|default:'—' }}" readonly />
+    </label>
+    <label>
+      Valor
+      <input type="text" value="{{ movimento.3|floatformat:2 }} €" readonly
+             class="{% if movimento.3 < 0 %}table-value-negative{% else %}table-value-positive{% endif %}" />
+    </label>
+    <label>
+      Referência
+      <input type="text" value="{{ movimento.4|default:'—' }}" readonly />
+    </label>
+  </div>
+</div>
+
+<!-- Sugestões de conciliação -->
+{% if sugestoes %}
+<div class="form-card" style="max-width: 900px;">
+  <h3 class="section-title">Sugestões de pagamento ({{ sugestoes|length }})</h3>
+
+  <div class="alert info">
+    <b>Como interpretar a confiança:</b>
+    <span>
+      <b>100%</b> – Referência bancária idêntica (correspondência exata)<br/>
+      <b>80%</b> – Valor idêntico e data próxima (±3 dias)<br/>
+      <b>60%</b> – Valor idêntico e mesmo associado<br/>
+      <b>40%</b> – Apenas valor idêntico (verificar manualmente)
+    </span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Confiança</th>
+          <th>Tipo</th>
+          <th>Associado</th>
+          <th>Quota</th>
+          <th>Período</th>
+          <th>Data pagamento</th>
+          <th>Valor</th>
+          <th>Método</th>
+          <th>Referência</th>
+          <th>Observação</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sugestao in sugestoes %}
+        <tr>
+          <td>
+            <span class="badge {% if sugestao.10 == 100 %}success{% elif sugestao.10 >= 80 %}warning{% else %}info{% endif %}">
+              {{ sugestao.10 }}%
+            </span>
+          </td>
+          <td>
+            {% if sugestao.9 == 'referencia_exata' %}Referência exata
+            {% elif sugestao.9 == 'valor_data_proxima' %}Valor + data próxima
+            {% elif sugestao.9 == 'valor_mesmo_associado' %}Valor + mesmo associado
+            {% else %}Apenas valor{% endif %}
+          </td>
+          <td>#{{ sugestao.8 }} {{ sugestao.12 }}</td>
+          <td>{{ sugestao.5|default:'—' }}</td>
+          <td>{{ sugestao.6|default:'—' }}</td>
+          <td>{{ sugestao.1|date:'d/m/Y H:i' }}</td>
+          <td class="table-value-positive">{{ sugestao.2|floatformat:2 }} €</td>
+          <td>{{ sugestao.3|default:'—' }}</td>
+          <td>{{ sugestao.4|default:'—' }}</td>
+          <td>{{ sugestao.11|default:'—' }}</td>
+          <td>
+            <form method="post" action="{% url 'conciliar_movimento' %}" style="display: inline;">
+              {% csrf_token %}
+              <input type="hidden" name="id_movimento" value="{{ movimento.0 }}" />
+              <input type="hidden" name="id_pagamento" value="{{ sugestao.0 }}" />
+              <input type="hidden" name="forcar" value="{% if sugestao.11 < 80 %}true{% else %}false{% endif %}" />
+              <button type="submit" class="button primary button-sm"
+                      onclick="return confirm('Confirmar conciliação deste movimento com este pagamento?')">
+                Conciliar
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if sugestoes|length > 1 %}
+  <div class="alert warning" style="margin-top: 16px;">
+    <b>Múltiplas sugestões encontradas.</b>
+    <span>
+      Verifique cuidadosamente antes de confirmar.
+      A conciliação com confiança < 80% requer validação manual.
+    </span>
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<div class="form-card" style="max-width: 900px;">
+  <div class="alert warning">
+    <b>Sem sugestões automáticas</b>
+    <span>
+      Não foram encontrados pagamentos correspondentes a este movimento.
+      Pode registar um novo pagamento manualmente ou verificar se o movimento
+      corresponde a uma entrada/saída não relacionada a quotas.
+    </span>
+  </div>
+  <div class="inline-actions">
+    <a href="{% url 'registar_pagamento' %}" class="button primary">Registar pagamento</a>
+    <a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button">Voltar</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

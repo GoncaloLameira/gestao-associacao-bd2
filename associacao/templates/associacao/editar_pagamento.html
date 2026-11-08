@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar pagamento{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Pagamentos / Editar{% endblock %}
+
+{% block page_title %}Editar pagamento{% endblock %}
+
+{% block page_description %}Atualize os dados do pagamento registado.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Associado <span class="required"></span>
+      <select name="{{ form.id_quota_associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for qa in form.id_quota_associado.field.queryset %}
+        <option value="{{ qa.pk }}" {% if form.id_quota_associado.value == qa.pk %}selected{% endif %}>#{{ qa.associado.numero_associado }} {{ qa.associado.nome_completo }} — {{ qa.quota.designacao }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Quota por liquidar <span class="required"></span>
+      <select name="{{ form.id_quota_associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for qa in form.id_quota_associado.field.queryset %}
+        <option value="{{ qa.pk }}" {% if form.id_quota_associado.value == qa.pk %}selected{% endif %}>{{ qa.quota.designacao }} — {{ qa.data_vencimento|date:"d/m/Y" }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Data de pagamento <span class="required"></span>
+      <input type="date" name="{{ form.data_pagamento.name }}" value="{{ form.data_pagamento.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Valor recebido (€) <span class="required"></span>
+      <input type="number" name="{{ form.valor_pago.name }}" step="0.01" min="0" value="{{ form.valor_pago.value|default:'' }}" placeholder="0.00" required />
+    </label>
+    <label>
+      Método <span class="required"></span>
+      <select name="{{ form.metodo_pagamento.name }}" required>
+        <option value="">Selecione...</option>
+        <option value="Transferência" {% if form.metodo_pagamento.value == "Transferência" %}selected{% endif %}>Transferência</option>
+        <option value="Numerário" {% if form.metodo_pagamento.value == "Numerário" %}selected{% endif %}>Numerário</option>
+        <option value="Multibanco" {% if form.metodo_pagamento.value == "Multibanco" %}selected{% endif %}>Multibanco</option>
+        <option value="MB Way" {% if form.metodo_pagamento.value == "MB Way" %}selected{% endif %}>MB Way</option>
+        <option value="Cheque" {% if form.metodo_pagamento.value == "Cheque" %}selected{% endif %}>Cheque</option>
+      </select>
+    </label>
+    <label>
+      Referência
+      <input type="text" name="{{ form.referencia_pagamento.name }}" value="{{ form.referencia_pagamento.value|default:'' }}" placeholder="Referência bancária (opcional)" />
+    </label>
+    <label>
+      Movimento bancário
+      <select name="{{ form.id_movimento.name }}">
+        <option value="">Sem movimento associado</option>
+        {% for mov in form.id_movimento.field.queryset %}
+        <option value="{{ mov.pk }}" {% if form.id_movimento.value == mov.pk %}selected{% endif %}>{{ mov.data_movimento|date:"d/m/Y" }} — {{ mov.valor_movimento }} €</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_pagamentos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

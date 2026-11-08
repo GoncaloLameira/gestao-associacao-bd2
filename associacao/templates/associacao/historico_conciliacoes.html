@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Histórico de Conciliações{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários / Conciliação{% endblock %}
+
+{% block page_title %}Histórico de conciliações{% endblock %}
+
+{% block page_description %}Registo de todas as conciliações realizadas entre movimentos e pagamentos.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button">Voltar à conciliação</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Data pagamento</th>
+        <th>Associado</th>
+        <th>Quota / Período</th>
+        <th>Valor pagamento</th>
+        <th>Método</th>
+        <th>Ref. pagamento</th>
+        <th>Data movimento</th>
+        <th>Valor movimento</th>
+        <th>Ref. movimento</th>
+        <th>Descrição movimento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if conciliacoes %}
+        {% for c in conciliacoes %}
+        <tr>
+          <td>{{ c.1|date:"d/m/Y H:i" }}</td>
+          <td>#{{ c.10 }} {{ c.11 }}</td>
+          <td>{{ c.12 }} ({{ c.13 }})</td>
+          <td class="table-value-positive">{{ c.2|floatformat:2 }} €</td>
+          <td>{{ c.3|default:'—' }}</td>
+          <td>{{ c.4|default:'—' }}</td>
+          <td>{{ c.6|date:"d/m/Y" }}</td>
+          <td class="{% if c.7 < 0 %}table-value-negative{% else %}table-value-positive{% endif %}">
+            {% if c.7 < 0 %}−{% else %}+{% endif %}{{ c.7|floatformat:2 }} €
+          </td>
+          <td>{{ c.9|default:'—' }}</td>
+          <td>{{ c.8|default:'—' }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="10" class="table-empty">
+            Não existem conciliações realizadas.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+  <p class="footnote">{{ conciliacoes|length }} registos</p>
+</div>
+{% endblock %}

@@ -189,14 +189,8 @@ SELECT
     mb.descricao_movimento,
     mb.valor_movimento,
     mb.referencia_movimento,
-    q.id_associacao
+    mb.id_associacao
 FROM movimento_bancario mb
-LEFT JOIN pagamento p
-    ON mb.id_movimento = p.id_movimento
-LEFT JOIN quota_associado qa
-    ON p.id_quota_associado = qa.id_quota_associado
-LEFT JOIN quota q
-    ON qa.id_quota = q.id_quota
 ORDER BY mb.data_movimento DESC;
 
 
@@ -284,10 +278,10 @@ ORDER BY d.data_upload DESC;
 -- AGGREGATED VIEWS (RF10, RF11)
 -- ==========================================
 
--- View: Quotas em dívida
--- Current: id_quota_associado, id_associado, numero_associado, associado, email, id_quota, designacao_quota, valor_quota, periodicidade_quota, periodo_referencia, valor_devido, data_vencimento, estado_quota_associado, dias_em_atraso, id_associacao
--- Already has id_associacao at END - KEEP AS IS
-CREATE OR REPLACE VIEW vw_quotas_em_divida AS
+-- View: Estado efetivo da quota_associado (calculado dinamicamente)
+-- Usada por vw_quotas_em_divida e outras views agregadas
+-- Current: id_quota_associado, id_associado, numero_associado, associado, email, id_quota, designacao_quota, valor_quota, periodicidade_quota, periodo_referencia, valor_devido, data_vencimento, estado_efetivo, total_pago, dias_em_atraso, id_associacao
+CREATE OR REPLACE VIEW vw_quota_associado_estado_efetivo AS
 SELECT
     qa.id_quota_associado,
     a.id_associado,
@@ -301,20 +295,65 @@ SELECT
     qa.periodo_referencia,
     qa.valor_devido,
     qa.data_vencimento,
-    qa.estado_quota_associado,
     CASE
-        WHEN qa.data_vencimento < CURRENT_DATE AND qa.estado_quota_associado IN ('Pendente', 'Em Dívida', 'Parcial')
+        WHEN qa.estado_quota_associado = 'Isento' THEN 'Isento'
+        WHEN COALESCE(SUM(p.valor_pago), 0) >= qa.valor_devido THEN 'Pago'
+        WHEN COALESCE(SUM(p.valor_pago), 0) > 0 THEN 'Parcial'
+        WHEN qa.data_vencimento < CURRENT_DATE THEN 'Em Dívida'
+        ELSE 'Pendente'
+    END AS estado_efetivo,
+    COALESCE(SUM(p.valor_pago), 0) AS total_pago,
+    CASE
+        WHEN qa.data_vencimento < CURRENT_DATE AND COALESCE(SUM(p.valor_pago), 0) < qa.valor_devido
         THEN CURRENT_DATE - qa.data_vencimento
         ELSE 0
     END AS dias_em_atraso,
     a.id_associacao
 FROM quota_associado qa
-INNER JOIN associado a
-    ON qa.id_associado = a.id_associado
-INNER JOIN quota q
-    ON qa.id_quota = q.id_quota
-WHERE qa.estado_quota_associado IN ('Pendente', 'Em Dívida', 'Parcial')
-ORDER BY qa.data_vencimento;
+INNER JOIN associado a ON qa.id_associado = a.id_associado
+INNER JOIN quota q ON qa.id_quota = q.id_quota
+LEFT JOIN pagamento p ON qa.id_quota_associado = p.id_quota_associado
+GROUP BY
+    qa.id_quota_associado,
+    a.id_associado,
+    a.numero_associado,
+    a.nome,
+    a.email,
+    q.id_quota,
+    q.designacao_quota,
+    q.valor_quota,
+    q.periodicidade_quota,
+    qa.periodo_referencia,
+    qa.valor_devido,
+    qa.data_vencimento,
+    qa.estado_quota_associado,
+    a.id_associacao;
+
+
+-- View: Quotas em dívida (usa estado efetivo calculado dinamicamente)
+-- Mostra quotas com estado efetivo 'Em Dívida' ou 'Parcial' vencido
+-- Current: id_quota_associado, id_associado, numero_associado, associado, email, id_quota, designacao_quota, valor_quota, periodicidade_quota, periodo_referencia, valor_devido, data_vencimento, estado_efetivo, total_pago, dias_em_atraso, id_associacao
+CREATE OR REPLACE VIEW vw_quotas_em_divida AS
+SELECT
+    id_quota_associado,
+    id_associado,
+    numero_associado,
+    associado,
+    email,
+    id_quota,
+    designacao_quota,
+    valor_quota,
+    periodicidade_quota,
+    periodo_referencia,
+    valor_devido,
+    data_vencimento,
+    estado_efetivo,
+    total_pago,
+    dias_em_atraso,
+    id_associacao
+FROM vw_quota_associado_estado_efetivo
+WHERE estado_efetivo IN ('Em Dívida', 'Parcial')
+ORDER BY data_vencimento;
 
 
 -- View: Pagamentos com detalhes completos
@@ -384,3 +423,8 @@ INNER JOIN associacao a
 LEFT JOIN mandato m
     ON d.id_mandato = m.id_mandato
 ORDER BY d.data_upload DESC;
+
+
+-- ==========================================
+-- END OF FILE
+-- ==========================================

@@ -1,41 +1,76 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Cargos</title>
-  </head>
-  <body>
-    <h1>Cargos</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <p>
-      <a href="{% url 'registar_cargo' %}"> Registar novo cargo </a>
-    </p>
+{% block title %}Cargos{% endblock %}
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Descrição</th>
-          <th>Órgão Social</th>
-          <th>Associação</th>
-        </tr>
-      </thead>
-      <tbody>
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Órgãos Sociais e Cargos{% endblock %}
+
+{% block page_title %}Órgãos Sociais e Cargos{% endblock %}
+
+{% block page_description %}Estrutura organizacional e responsabilidades em vigor.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_orgao_social' %}" class="button primary">
+  Adicionar órgão
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Órgão social</th>
+        <th>Cargo</th>
+        <th>Associado</th>
+        <th>Estado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if cargos %}
         {% for cargo in cargos %}
         <tr>
-          <td>{{ cargo.0 }}</td>
+          <td>{{ cargo.3|default:"—" }}</td>
           <td>{{ cargo.1 }}</td>
-          <td>{{ cargo.2 }}</td>
-          <td>{{ cargo.3 }}</td>
-          <td>{{ cargo.4 }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5">Nenhum cargo registado.</td>
+          <td>{{ cargo.4|default:"—" }}</td>
+          <td>
+            <span class="status success">Em vigor</span>
+          </td>
+          <td>
+            <a href="{% url 'editar_cargo' cargo.0 %}" class="table-action">Editar</a>
+          </td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Nenhum cargo registado.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ cargos|length }} registos</p>
+</div>
+
+{% endblock %}
