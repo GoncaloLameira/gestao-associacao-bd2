@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar quota{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Quotas / Editar{% endblock %}
+
+{% block page_title %}Editar quota{% endblock %}
+
+{% block page_description %}Atualize os dados da quota do associado.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Associado <span class="required"></span>
+      <select name="{{ form.id_associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for associado in form.id_associado.field.queryset %}
+        <option value="{{ associado.pk }}" {% if form.id_associado.value == associado.pk %}selected{% endif %}>#{{ associado.numero_associado }} {{ associado.nome_completo }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Quota <span class="required"></span>
+      <select name="{{ form.id_quota.name }}" required>
+        <option value="">Selecione...</option>
+        {% for quota in form.id_quota.field.queryset %}
+        <option value="{{ quota.pk }}" {% if form.id_quota.value == quota.pk %}selected{% endif %}>{{ quota.designacao }} ({{ quota.valor }} €)</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Valor devido (€) <span class="required"></span>
+      <input type="number" name="{{ form.valor_devido.name }}" step="0.01" value="{{ form.valor_devido.value|default:'' }}" placeholder="0.00" required />
+    </label>
+    <label>
+      Data de vencimento <span class="required"></span>
+      <input type="date" name="{{ form.data_vencimento.name }}" value="{{ form.data_vencimento.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Período de referência <span class="required"></span>
+      <input type="text" name="{{ form.periodo_referencia.name }}" value="{{ form.periodo_referencia.value|default:'' }}" placeholder="Ex: 2026" required />
+    </label>
+    <label>
+      Estado <span class="required"></span>
+      <select name="{{ form.estado_quota_associado.name }}" required>
+        <option value="">Selecione...</option>
+        <option value="Pendente" {% if form.estado_quota_associado.value == "Pendente" %}selected{% endif %}>Pendente</option>
+        <option value="Paga" {% if form.estado_quota_associado.value == "Paga" %}selected{% endif %}>Paga</option>
+        <option value="Em Dívida" {% if form.estado_quota_associado.value == "Em Dívida" %}selected{% endif %}>Em Dívida</option>
+        <option value="Parcial" {% if form.estado_quota_associado.value == "Parcial" %}selected{% endif %}>Parcial</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_quotas_associado' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

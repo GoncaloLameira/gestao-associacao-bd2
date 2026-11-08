@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Documentos{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Documentos{% endblock %}
+
+{% block page_title %}Documentos{% endblock %}
+
+{% block page_description %}Arquivo documental da associação, com ligação opcional a um mandato.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_documento' %}" class="button primary">
+  Registar documento
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Tipo</th>
+        <th>Data</th>
+        <th>Mandato</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if documentos %}
+        {% for documento in documentos %}
+        <tr>
+          <td>{{ documento.1 }}</td>
+          <td>{{ documento.7 }}</td>
+          <td>{{ documento.3|date:"d/m/Y" }}</td>
+          <td>{% if documento.9 %}{{ documento.9|date:"d/m/Y" }} – {{ documento.10|date:"d/m/Y"|default:"Em vigor" }}{% else %}Sem mandato{% endif %}</td>
+          <td>
+            <a href="{% url 'editar_documento' documento.0 %}" class="table-action">Editar</a>
+            <a href="{% url 'descarregar_documento' documento.0 %}" class="table-action">Descarregar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Não existem documentos registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ documentos|length }} registos</p>
+</div>
+
+{% endblock %}

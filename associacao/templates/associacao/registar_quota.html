@@ -1,20 +1,61 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Registar Quota</title>
-  </head>
-  <body>
-    <h1>Registar Quota</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
+{% block title %}Atribuir quota{% endblock %}
 
-      <button type="submit">Registar Quota</button>
-    </form>
+{% block sidebar_subtitle %}Administração{% endblock %}
 
-    <p>
-      <a href="{% url 'listar_quotas' %}">Voltar à lista</a>
-    </p>
-  </body>
-</html>
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Quotas / Atribuir{% endblock %}
+
+{% block page_title %}Atribuir quota{% endblock %}
+
+{% block page_description %}Associe uma quota a um associado para um determinado período.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Associado <span class="required"></span>
+      <select name="{{ form.associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for associado in form.associado.field.queryset %}
+        <option value="{{ associado.pk }}">#{{ associado.numero_associado }} {{ associado.nome_completo }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Quota <span class="required"></span>
+      <select name="{{ form.quota.name }}" required>
+        <option value="">Selecione...</option>
+        {% for q in form.quota.field.queryset %}
+        <option value="{{ q.pk }}">{{ q.designacao }} ({{ q.valor }} €)</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Data de vencimento <span class="required"></span>
+      <input type="date" name="{{ form.data_vencimento.name }}" required />
+    </label>
+    <label>
+      Estado <span class="required"></span>
+      <select name="{{ form.estado.name }}" required>
+        <option value="">Selecione...</option>
+        <option value="Pendente">Pendente</option>
+        <option value="Paga">Paga</option>
+        <option value="Em Dívida">Em Dívida</option>
+        <option value="Parcial">Parcial</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_quotas' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

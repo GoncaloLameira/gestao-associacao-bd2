@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Importar Movimentos Bancários{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários / Importar CSV{% endblock %}
+
+{% block page_title %}Importar movimentos bancários{% endblock %}
+
+{% block page_description %}Carregue um ficheiro CSV com movimentos bancários para importação.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button">Voltar à conciliação</a>
+{% endblock %}
+
+{% block content %}
+<div class="form-card" style="max-width: 800px;">
+  {% csrf_token %}
+
+  <div class="alert info">
+    <b>Formato CSV suportado</b>
+    <span>
+      O ficheiro deve conter as colunas obrigatórias:<br/>
+      <code>data_movimento,descricao_movimento,valor_movimento,referencia_movimento</code><br/><br/>
+      <b>Exemplo:</b><br/>
+      <code>2025-01-15,Transferência recebida,150.00,REF123456</code><br/>
+      <code>2025-01-16,Pagamento quota Janeiro,30.00,QUOTA-001</code><br/><br/>
+      <b>Notas:</b>
+      <ul>
+        <li>Data no formato ISO: YYYY-MM-DD</li>
+        <li>Valor com vírgula ou ponto decimal (ex: 150,00 ou 150.00)</li>
+        <li>Referência é opcional</li>
+        <li>Duplicados (mesma data, valor, referência e associação) são ignorados</li>
+        <li>Tamanho máximo: 2MB</li>
+      </ul>
+    </span>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <h3 class="section-title">Selecionar ficheiro</h3>
+
+    <div class="form-grid">
+      <label>
+        Ficheiro CSV <span class="required">*</span>
+        <input type="file" name="{{ form.arquivo_csv.name }}" accept=".csv" required />
+        {% if form.arquivo_csv.errors %}
+          <div class="error-text">{{ form.arquivo_csv.errors }}</div>
+        {% endif %}
+      </label>
+
+      <label>
+        Delimitador
+        <select name="{{ form.delimitador.name }}">
+          <option value="," {% if form.delimitador.value == ',' %}selected{% endif %}>Vírgula (,)</option>
+          <option value=";" {% if form.delimitador.value == ';' %}selected{% endif %}>Ponto e vírgula (;)</option>
+          <option value="\t" {% if form.delimitador.value == '\t' %}selected{% endif %}>Tabulação (TAB)</option>
+        </select>
+      </label>
+
+      <label class="checkbox-label">
+        <input type="checkbox" name="{{ form.tem_cabecalho.name }}" {% if form.tem_cabecalho.value %}checked{% endif %} />
+        Primeira linha é cabeçalho
+      </label>
+    </div>
+
+    <div class="inline-actions">
+      <button class="button primary" type="submit">Importar</button>
+      <a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

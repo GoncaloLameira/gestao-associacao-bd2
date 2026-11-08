@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Eventos{% endblock %}
+
+{% block sidebar_subtitle %}Portal do Associado{% endblock %}
+
+{% block topbar_subtitle %}Portal do Associado{% endblock %}
+
+{% block page_eyebrow %}Eventos{% endblock %}
+
+{% block page_title %}Eventos{% endblock %}
+
+{% block page_description %}Consulte a agenda da associação e os detalhes de cada evento.{% endblock %}
+
+{% block sidebar_foot %}
+{{ user.get_full_name }} · Associado n.º {{ user.numero_associado }}
+<br />
+Conta individual
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Data inicial
+    <input type="date" />
+  </label>
+  <label>
+    Data final
+    <input type="date" />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome do evento</th>
+        <th>Data</th>
+        <th>Hora</th>
+        <th>Local</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if eventos %}
+        {% for evento in eventos %}
+        <tr>
+          <td>{{ evento.1 }}</td>
+          <td>{{ evento.3|date:"d/m/Y" }}</td>
+          <td>{{ evento.3|date:"H:i" }}–{{ evento.4|date:"H:i" }}</td>
+          <td>{{ evento.5|default:"—" }}</td>
+          <td>
+            <span class="status {% if evento.6 == 'Concluído' %}success{% elif evento.6 == 'Planeado' or evento.6 == 'Agendado' %}warning{% else %}danger{% endif %}">
+              {{ evento.6 }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Não existem eventos registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ eventos|length }} registos</p>
+</div>
+{% endblock %}

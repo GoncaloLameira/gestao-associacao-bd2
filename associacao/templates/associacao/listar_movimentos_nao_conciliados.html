@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static dict_extras %}
+
+{% block title %}Conciliação Bancária{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários / Conciliação{% endblock %}
+
+{% block page_title %}Conciliação bancária{% endblock %}
+
+{% block page_description %}Associe movimentos bancários a pagamentos registados.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'importar_movimentos_csv' %}" class="button primary">Importar CSV</a>
+<a href="{% url 'historico_conciliacoes' %}" class="button">Histórico</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<form method="get" class="filters">
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+    <label style="flex: 1; min-width: 200px;">
+      Pesquisa
+      <input type="text" name="pesquisa" placeholder="Descrição, referência ou valor" value="{{ form.pesquisa.value|default:'' }}" />
+    </label>
+
+    <label style="flex: 1; min-width: 150px;">
+      Data início
+      <input type="date" name="data_inicio" value="{{ form.data_inicio.value|default:'' }}" />
+    </label>
+
+    <label style="flex: 1; min-width: 150px;">
+      Data fim
+      <input type="date" name="data_fim" value="{{ form.data_fim.value|default:'' }}" />
+    </label>
+
+    <label style="flex: 1; min-width: 180px;">
+      Estado
+      <select name="estado">
+        <option value="pendente" {% if form.estado.value == 'pendente' %}selected{% endif %}>Pendentes (sem conciliação)</option>
+        <option value="conciliado" {% if form.estado.value == 'conciliado' %}selected{% endif %}>Conciliados</option>
+      </select>
+    </label>
+
+    <button class="button primary" type="submit" style="height: 42px;">Filtrar</button>
+    <a href="{% url 'listar_movimentos_nao_conciliados' %}" class="button text-link" style="height: 42px; display: flex; align-items: center;">Limpar</a>
+  </div>
+</form>
+
+<!-- Tabela de movimentos pendentes -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Referência</th>
+        <th>Sugestões</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if movimentos %}
+        {% for movimento in movimentos %}
+        <tr>
+          <td>{{ movimento.1|date:"d/m/Y" }}</td>
+          <td>{{ movimento.2|default:"—" }}</td>
+          <td class="{% if movimento.3 < 0 %}table-value-negative{% else %}table-value-positive{% endif %}">
+            {% if movimento.3 < 0 %}−{% else %}+{% endif %}{{ movimento.3|floatformat:2 }} €
+          </td>
+          <td>{{ movimento.4|default:"—" }}</td>
+          <td>
+            {% with sugs=sugestoes|get_item:movimento.0 %}
+              {% if sugs %}
+                <div class="badge success" style="cursor: pointer;" onclick="window.location.href='{% url 'ver_sugestoes_conciliacao' movimento.0 %}'">
+                  {{ sugs|length }} sugestão{{ sugs|length|pluralize:"s" }} (clicar para ver)
+                </div>
+              {% else %}
+                <span class="badge warning">Sem sugestões</span>
+              {% endif %}
+            {% endwith %}
+          </td>
+          <td>
+            {% with sugs=sugestoes|get_item:movimento.0 %}
+              {% if sugs %}
+                <a href="{% url 'ver_sugestoes_conciliacao' movimento.0 %}" class="button button-sm">Ver sugestões</a>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            {% endwith %}
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="6" class="table-empty">
+            {% if form.estado.value == 'conciliado' %}
+              Não existem conciliações realizadas.
+            {% else %}
+              Não existem movimentos pendentes de conciliação.
+              <a href="{% url 'importar_movimentos_csv' %}" style="margin-left: 8px;">Importar CSV</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+  <p class="footnote">{{ movimentos|length }} registos</p>
+</div>
+
+{% endblock %}

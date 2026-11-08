@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registar documento{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Documentos / Registar{% endblock %}
+
+{% block page_title %}Registar documento{% endblock %}
+
+{% block page_description %}Carregue o ficheiro e complete os respetivos metadados.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Nome <span class="required">*</span>
+      <input type="text" name="{{ form.nome_documento.name }}" value="{{ form.nome_documento.value|default:'' }}" placeholder="Nome do documento" required />
+      {% if form.nome_documento.errors %}
+        <span class="error">{{ form.nome_documento.errors.0 }}</span>
+      {% endif %}
+    </label>
+    <label>
+      Tipo de documento <span class="required">*</span>
+      <select name="{{ form.id_tipo_documento.name }}" required>
+        <option value="">Selecione...</option>
+        {% for value, label in form.id_tipo_documento.field.choices %}
+        <option value="{{ value }}" {% if form.id_tipo_documento.value == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% if form.id_tipo_documento.errors %}
+        <span class="error">{{ form.id_tipo_documento.errors.0 }}</span>
+      {% endif %}
+    </label>
+    <label>
+      Data do documento <span class="required">*</span>
+      <input type="date" name="{{ form.data_documento.name }}" value="{{ form.data_documento.value|date:'Y-m-d'|default:'' }}" required />
+      {% if form.data_documento.errors %}
+        <span class="error">{{ form.data_documento.errors.0 }}</span>
+      {% endif %}
+    </label>
+    <label>
+      Mandato relacionado
+      <select name="{{ form.id_mandato.name }}">
+        <option value="">Sem mandato</option>
+        {% for value, label in form.id_mandato.field.choices %}
+        <option value="{{ value }}" {% if form.id_mandato.value == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% if form.id_mandato.errors %}
+        <span class="error">{{ form.id_mandato.errors.0 }}</span>
+      {% endif %}
+    </label>
+    <label>
+      Ficheiro <span class="required">*</span>
+      <input type="file" name="{{ form.ficheiro.name }}" required />
+      {% if form.ficheiro.help_text %}
+        <span class="help-text">{{ form.ficheiro.help_text }}</span>
+      {% endif %}
+      {% if form.ficheiro.errors %}
+        <span class="error">{{ form.ficheiro.errors.0 }}</span>
+      {% endif %}
+    </label>
+    <label class="wide">
+      Observações
+      <textarea name="{{ form.observacoes.name }}" placeholder="Observações (opcional)">{{ form.observacoes.value|default:'' }}</textarea>
+      {% if form.observacoes.errors %}
+        <span class="error">{{ form.observacoes.errors.0 }}</span>
+      {% endif %}
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_documentos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

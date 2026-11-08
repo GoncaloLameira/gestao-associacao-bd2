@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar associado{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Associados / Editar{% endblock %}
+
+{% block page_title %}Editar associado{% endblock %}
+
+{% block page_description %}Atualize os dados do associado.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Nome completo <span class="required"></span>
+      <input type="text" name="{{ form.nome_completo.name }}" value="{{ form.nome_completo.value|default:'' }}" placeholder="Nome completo" required />
+    </label>
+    <label>
+      Número de associado <span class="required"></span>
+      <input type="text" name="{{ form.numero_associado.name }}" value="{{ form.numero_associado.value|default:'' }}" placeholder="Ex: 1" required />
+    </label>
+    <label>
+      NIF <span class="required"></span>
+      <input type="text" name="{{ form.nif.name }}" value="{{ form.nif.value|default:'' }}" placeholder="9 dígitos" maxlength="9" required />
+    </label>
+    <label>
+      Data de nascimento
+      <input type="date" name="{{ form.data_nascimento.name }}" value="{{ form.data_nascimento.value|date:'Y-m-d'|default:'' }}" />
+    </label>
+    <label>
+      Email
+      <input type="email" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}" placeholder="email@exemplo.pt" />
+    </label>
+    <label>
+      Telefone
+      <input type="tel" name="{{ form.telefone.name }}" value="{{ form.telefone.value|default:'' }}" placeholder="+351 9XX XXX XXX" />
+    </label>
+    <label class="wide">
+      Morada
+      <input type="text" name="{{ form.morada.name }}" value="{{ form.morada.value|default:'' }}" placeholder="Rua, nº, andar, código postal, localidade" />
+    </label>
+    <label>
+      Localidade <span class="required"></span>
+      <input type="text" name="{{ form.localidade.name }}" value="{{ form.localidade.value|default:'' }}" placeholder="Localidade" required />
+    </label>
+    <label>
+      Data de adesão <span class="required"></span>
+      <input type="date" name="{{ form.data_adesao.name }}" value="{{ form.data_adesao.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Estado <span class="required"></span>
+      <select name="{{ form.estado.name }}" required>
+        <option value="">Selecione...</option>
+        <option value="Ativo" {% if form.estado.value == "Ativo" %}selected{% endif %}>Ativo</option>
+        <option value="Inativo" {% if form.estado.value == "Inativo" %}selected{% endif %}>Inativo</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_associados' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

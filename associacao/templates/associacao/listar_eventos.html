@@ -1,54 +1,76 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Eventos</title>
-  </head>
+{% extends 'base.html' %}
+{% load static %}
 
-  <body>
-    <h1>Eventos</h1>
+{% block title %}Eventos{% endblock %}
 
-    <p>
-      <a href="{% url 'registar_evento' %}"> Registar novo evento </a>
-    </p>
+{% block sidebar_subtitle %}Administração{% endblock %}
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Descrição</th>
-          <th>Início</th>
-          <th>Fim</th>
-          <th>Local</th>
-          <th>Estado</th>
-          <th>Associação</th>
-        </tr>
-      </thead>
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
 
-      <tbody>
+{% block page_eyebrow %}Eventos{% endblock %}
+
+{% block page_title %}Eventos{% endblock %}
+
+{% block page_description %}Agenda cultural e recreativa da associação.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_evento' %}" class="button primary">
+  Criar evento
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<form class="filters" method="get">
+  <label>
+    Data inicial
+    <input type="date" name="data_inicial" value="{{ data_inicial }}" />
+  </label>
+  <label>
+    Data final
+    <input type="date" name="data_final" value="{{ data_final }}" />
+  </label>
+  <button class="button" type="submit">Filtrar</button>
+  <a class="text-link" href="{% url 'listar_eventos' %}">Limpar</a>
+</form>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Data</th>
+        <th>Hora</th>
+        <th>Local</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if eventos %}
         {% for evento in eventos %}
         <tr>
-          <td>{{ evento.0 }}</td>
           <td>{{ evento.1 }}</td>
-          <td>{{ evento.2 }}</td>
-          <td>{{ evento.3|date:"d/m/Y H:i" }}</td>
-          <td>{{ evento.4|date:"d/m/Y H:i"|default:"-" }}</td>
-          <td>{{ evento.5 }}</td>
-          <td>{{ evento.6 }}</td>
-          <td>{{ evento.7 }}</td>
-        </tr>
-
-        {% empty %}
-        <tr>
-          <td colspan="8">Não existem eventos registados.</td>
+          <td>{{ evento.3|date:"d/m/Y" }}</td>
+          <td>{{ evento.3|date:"H:i" }}–{{ evento.4|date:"H:i" }}</td>
+          <td>{{ evento.5|default:"—" }}</td>
+          <td>
+            <span class="status {% if evento.6 == 'Concluído' %}success{% elif evento.6 == 'Planeado' or evento.6 == 'Agendado' %}warning{% else %}danger{% endif %}">
+              {{ evento.6 }}
+            </span>
+          </td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Não existem eventos registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ eventos|length }} registos</p>
+</div>
 
-    <p>
-      <a href="{% url 'listar_associacoes' %}"> Consultar associação </a>
-    </p>
-  </body>
-</html>
+{% endblock %}

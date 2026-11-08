@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar quota base{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Quotas / Editar{% endblock %}
+
+{% block page_title %}Editar quota base{% endblock %}
+
+{% block page_description %}Atualize os dados da quota base.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Associação <span class="required"></span>
+      <select name="{{ form.associacao.name }}" required>
+        <option value="">Selecione...</option>
+        {% for assoc in form.associacao.field.queryset %}
+        <option value="{{ assoc.pk }}" {% if form.associacao.value == assoc.pk %}selected{% endif %}>{{ assoc.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Exercício <span class="required"></span>
+      <select name="{{ form.exercicio.name }}" required>
+        <option value="">Selecione...</option>
+        {% for ex in form.exercicio.field.queryset %}
+        <option value="{{ ex.pk }}" {% if form.exercicio.value == ex.pk %}selected{% endif %}>{{ ex.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Valor (€) <span class="required"></span>
+      <input type="number" step="0.01" min="0" name="{{ form.valor.name }}" value="{{ form.valor.value|default:'' }}" placeholder="0.00" required />
+    </label>
+    <label>
+      Data de vigência <span class="required"></span>
+      <input type="date" name="{{ form.data_vigencia.name }}" value="{{ form.data_vigencia.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_quotas' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

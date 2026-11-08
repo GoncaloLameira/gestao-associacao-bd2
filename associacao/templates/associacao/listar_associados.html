@@ -1,47 +1,80 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Lista de Associados</title>
-  </head>
-  <body>
-    <h1>Lista de Associados</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <p>
-      <a href="{% url 'registar_associado' %}">Registar novo associado</a>
-    </p>
+{% block title %}Associados{% endblock %}
 
-    <table border="1" cellpadding="8">
-      <thead>
-        <tr>
-          <th>Número</th>
-          <th>Nome</th>
-          <th>NIF</th>
-          <th>Email</th>
-          <th>Data de adesão</th>
-          <th>Estado</th>
-          <th>Localidade</th>
-          <th>Associação</th>
-        </tr>
-      </thead>
-      <tbody>
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Associados{% endblock %}
+
+{% block page_title %}Associados{% endblock %}
+
+{% block page_description %}{{ total_ativos }} ativos · {{ total_inativos }} inativos · Histórico de associados preservado{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_associado' %}" class="button primary">
+  Registar associado
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Número e nome</th>
+        <th>NIF</th>
+        <th>Contacto</th>
+        <th>Adesão</th>
+        <th>Estado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if associados %}
         {% for associado in associados %}
         <tr>
-          <td>{{ associado.1 }}</td>
-          <td>{{ associado.2 }}</td>
-          <td>{{ associado.3 }}</td>
-          <td>{{ associado.5 }}</td>
-          <td>{{ associado.7 }}</td>
-          <td>{{ associado.9 }}</td>
-          <td>{{ associado.15|default:"—" }}</td>
-          <td>{{ associado.16 }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="8">Ainda não existem associados registados.</td>
+          <td>#{{ associado.1 }} {{ associado.2 }}</td>
+          <td>{{ associado.3|default:"—" }}</td>
+          <td>{{ associado.5|default:associado.6|default:"—" }}</td>
+          <td>{{ associado.7|date:"d/m/Y" }}</td>
+          <td>
+            <span class="status {% if associado.9 == 'Ativo' %}success{% elif associado.9 == 'Inativo' %}danger{% else %}warning{% endif %}">
+              {{ associado.9 }}
+            </span>
+          </td>
+          <td>
+            <a class="button danger button-sm" href="{% url 'eliminar_associado' associado.0 %}">Remover</a>
+          </td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+      {% else %}
+        <tr>
+          <td colspan="6" class="table-empty">
+            Ainda não existem associados registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ associados|length }} registos</p>
+</div>
+
+{% endblock %}

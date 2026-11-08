@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quotas dos Associados{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Quotas{% endblock %}
+
+{% block page_title %}Quotas dos associados{% endblock %}
+
+{% block page_description %}Obrigações anuais e respetiva situação de liquidação.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'gerar_quotas_associados' %}" class="button primary">
+  Gerar quotas
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Metrics -->
+<div class="metrics">
+  <article class="metric">
+    <span>Quotas atribuídas no ano atual</span>
+    <strong>{{ quotas_ano }}</strong>
+    <small>Total com vencimento no ano atual</small>
+  </article>
+  <article class="metric">
+    <span>Quotas pagas</span>
+    <strong>{{ quotas_pagas }}</strong>
+    <small>{{ percent_pagas }}% liquidadas</small>
+  </article>
+  <article class="metric">
+    <span>Valor a receber</span>
+    <strong>{{ valor_pendente|floatformat:2 }} €</strong>
+    <small>{{ quotas_pendentes }} quotas pendentes</small>
+  </article>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Associado</th>
+        <th>Quota</th>
+        <th>Vencimento</th>
+        <th>Valor</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if quotas %}
+        {% for qa in quotas %}
+        <tr>
+          <td>#{{ qa.6 }} {{ qa.7 }}</td>
+          <td>{{ qa.8 }}</td>
+          <td>{{ qa.3|date:"d/m/Y" }}</td>
+          <td>{{ qa.2|floatformat:2 }} €</td>
+          <td>
+            <span class="status {% if qa.5 == 'Pago' %}success{% elif qa.5 in 'Pendente,Em Dívida' %}warning{% elif qa.5 == 'Parcial' %}warning{% else %}danger{% endif %}">
+              {{ qa.5 }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Ainda não foram geradas quotas para os associados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ quotas|length }} registos</p>
+</div>
+
+{% endblock %}

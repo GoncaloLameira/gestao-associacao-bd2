@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Gestão de Associações{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Saltar para o conteúdo</a>
+    <main class="login-shell {% block login_shell_class %}{% endblock %}" id="main-content" role="main" tabindex="-1">
+      {% block login_brand %}
+      <section class="login-brand">
+        <div class="brand-mark">Gestão de Associações</div>
+        <div>
+          <h1>
+            Toda a associação,
+            <br />
+            num único lugar.
+          </h1>
+          <p>
+            Associados, organização e finanças da sua associação.
+          </p>
+        </div>
+        <small>
+          <b>ESTGV · Engenharia Informática</b>
+          <br />
+          Bases de Dados II · 3.º ano
+        </small>
+      </section>
+      {% endblock %}
+      <section class="login-form-wrap">
+        {% block public_content %}{% endblock %}
+      </section>
+    </main>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

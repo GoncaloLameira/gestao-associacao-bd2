@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Gestão de Associações{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Saltar para o conteúdo</a>
+    {% if user.is_authenticated %}
+      <!-- Mobile scrim -->
+      <div class="mobile-scrim" id="sidebarOverlay"></div>
+
+      <!-- Sidebar wrap -->
+      <div class="sidebar-wrap" id="sidebarWrap">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
+          <div class="sidebar-brand">
+            <b>Gestão de Associações</b>
+            <span>{% block sidebar_subtitle %}{% endblock %}</span>
+          </div>
+          <nav>
+            <ul>
+              {% if user.tipo == 'direcao' %}
+                {% include 'associacao/_menu_direcao.html' %}
+              {% elif user.tipo == 'associado' %}
+                {% include 'associacao/_menu_associado.html' %}
+              {% endif %}
+            </ul>
+          </nav>
+          <div class="sidebar-foot">
+            {% block sidebar_foot %}{% endblock %}
+          </div>
+        </aside>
+      </div>
+
+      <!-- Workspace -->
+      <div class="workspace">
+        <!-- Topbar -->
+        <header class="topbar" role="banner">
+          <div>
+            <b>{% if user.tipo == 'direcao' %}{{ user.nome }}{% elif user.tipo == 'associado' and user.associacao_nome %}{{ user.associacao_nome }}{% else %}Associação{% endif %}</b>
+            <span>{% block topbar_subtitle %}{% endblock %}</span>
+          </div>
+          <div class="topbar-actions">
+            <a href="{% url 'logout' %}" class="button button-sm">
+              Sair
+            </a>
+          </div>
+        </header>
+
+        <!-- Mobile menu button -->
+        <button class="mobile-menu" id="mobileMenuBtn" aria-label="Abrir menu" aria-controls="sidebarWrap" aria-expanded="false" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Main content -->
+        <main class="content" id="main-content" role="main" tabindex="-1">
+          {% if messages %}
+            <div class="messages" role="status" aria-live="polite">
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% block page_title_block %}
+          <div class="page-title">
+            <div>
+              <span>{% block page_eyebrow %}{% endblock %}</span>
+              <h1>{% block page_title %}{% endblock %}</h1>
+              <p>{% block page_description %}{% endblock %}</p>
+            </div>
+            {% block page_action %}{% endblock %}
+          </div>
+          {% endblock %}
+
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+
+      <!-- JavaScript -->
+      <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+          const sidebarWrap = document.getElementById('sidebarWrap');
+          const overlay = document.getElementById('sidebarOverlay');
+          const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+          if (sidebarWrap && overlay) {
+            const isOpen = sidebarWrap.classList.toggle('open');
+            overlay.classList.toggle('visible', isOpen);
+
+            if (mobileMenuBtn) {
+              mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+            }
+          }
+        }
+
+        // Close sidebar when clicking a nav link (mobile)
+        document.addEventListener('click', function(e) {
+          if (e.target.closest('.nav-item')) {
+            const sidebarWrap = document.getElementById('sidebarWrap');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebarWrap && sidebarWrap.classList.contains('open')) {
+              sidebarWrap.classList.remove('open');
+              overlay.classList.remove('visible');
+              const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+              if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
+          }
+        });
+
+        // Close sidebar with Escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            const sidebarWrap = document.getElementById('sidebarWrap');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebarWrap && sidebarWrap.classList.contains('open')) {
+              sidebarWrap.classList.remove('open');
+              overlay.classList.remove('visible');
+              const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+              if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
+          }
+        });
+      </script>
+
+      {% block extra_js %}{% endblock %}
+    {% else %}
+      <!-- Login page (no sidebar) -->
+      <main class="login-shell" role="main">
+        <section class="login-brand">
+          <div class="brand-mark">Gestão de Associações</div>
+          <div>
+            <h1>
+              Toda a associação,
+              <br />
+              num único lugar.
+            </h1>
+            <p>
+              Associados, organização e finanças da sua associação.
+            </p>
+          </div>
+          <small>
+            <b>ESTGV · Engenharia Informática</b>
+            <br />
+            Bases de Dados II · 3.º ano
+          </small>
+        </section>
+        <section class="login-form-wrap">
+          {% block login_content %}{% endblock %}
+        </section>
+      </main>
+    {% endif %}
+  </body>
+</html>

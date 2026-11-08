@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}{% if conta_existente %}Associado adicionado{% else %}Credenciais do associado{% endif %}{% endblock %}
+{% block page_eyebrow %}Associados{% endblock %}
+{% block page_title %}{% if conta_existente %}Associado adicionado{% else %}Credenciais criadas{% endif %}{% endblock %}
+{% block page_description %}{% if conta_existente %}A inscrição foi ligada à conta já existente.{% else %}Copie e entregue estas credenciais ao associado. A palavra-passe só é apresentada nesta página.{% endif %}{% endblock %}
+{% block content %}
+<section class="form-card credential-card">
+  <div class="alert success"><b>Associado registado</b><span>{% if conta_existente %}Este associado já tem conta. As credenciais existentes foram preservadas e não será pedida uma nova palavra-passe.{% else %}Será pedida uma nova palavra-passe no primeiro acesso.{% endif %}</span></div>
+  <div class="detail-grid">
+    <div><span>Associado</span><b>{{ associado_nome }}</b></div>
+    <div><span>Identificador de acesso (NIF)</span><b>{{ associado_nif }}</b></div>
+  </div>
+  {% if not conta_existente %}<label class="credential-copy" for="palavra-passe-temporaria">Palavra-passe temporária
+    <div class="copy-row"><input id="palavra-passe-temporaria" type="text" value="{{ palavra_passe_temporaria }}" readonly /><button class="button" type="button" data-copy-target="palavra-passe-temporaria">Copiar</button></div>
+  </label>{% endif %}
+  <div class="inline-actions"><a class="button primary" href="{% url 'listar_associados' %}">Concluir</a></div>
+</section>
+{% endblock %}
+{% block extra_js %}<script>document.querySelector('[data-copy-target]')?.addEventListener('click', function () { const campo = document.getElementById(this.dataset.copyTarget); navigator.clipboard.writeText(campo.value); this.textContent = 'Copiada'; });</script>{% endblock %}

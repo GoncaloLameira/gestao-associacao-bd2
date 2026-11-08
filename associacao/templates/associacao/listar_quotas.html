@@ -1,45 +1,95 @@
-<!doctype html>
-<html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Lista de Quotas</title>
-  </head>
-  <body>
-    <h1>Lista de Quotas</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <p>
-      <a href="{% url 'registar_quota' %}">Registar nova quota</a>
-    </p>
+{% block title %}Quotas{% endblock %}
 
-    <table border="1" cellpadding="8">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Designação</th>
-          <th>Valor (€)</th>
-          <th>Periodicidade</th>
-          <th>Data de início</th>
-          <th>Data de fim</th>
-          <th>Associação</th>
-        </tr>
-      </thead>
-      <tbody>
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Quotas{% endblock %}
+
+{% block page_title %}Quotas dos associados{% endblock %}
+
+{% block page_description %}Obrigações anuais e respetiva situação de liquidação.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_quota' %}" class="button primary">
+  Atribuir quota
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Metrics -->
+<div class="metrics">
+  <article class="metric">
+    <span>Quotas atribuídas no ano atual</span>
+    <strong>{{ quotas_ano }}</strong>
+    <small>Total com vencimento no ano atual</small>
+  </article>
+  <article class="metric">
+    <span>Quotas pagas</span>
+    <strong>{{ quotas_pagas }}</strong>
+    <small>{{ percent_pagas }}% liquidadas</small>
+  </article>
+  <article class="metric">
+    <span>Valor a receber</span>
+    <strong>{{ valor_pendente|floatformat:2 }} €</strong>
+    <small>{{ quotas_pendentes }} quotas pendentes</small>
+  </article>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Associado</th>
+        <th>Quota</th>
+        <th>Vencimento</th>
+        <th>Valor</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if quotas %}
         {% for quota in quotas %}
         <tr>
-          <td>{{ quota.0 }}</td>
+          <td>—</td>
           <td>{{ quota.1 }}</td>
-          <td>{{ quota.2|floatformat:2 }}</td>
-          <td>{{ quota.3 }}</td>
-          <td>{{ quota.4 }}</td>
-          <td>{{ quota.5|default:"—" }}</td>
-          <td>{{ quota.6 }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="7">Ainda não existem quotas registadas.</td>
+          <td>{{ quota.4|date:"d/m/Y" }}</td>
+          <td>{{ quota.2|floatformat:2 }} €</td>
+          <td>
+            <span class="status {% if quota.5 %}warning{% else %}success{% endif %}">
+              {% if quota.5 %}Terminada{% else %}Em vigor{% endif %}
+            </span>
+          </td>
         </tr>
         {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Ainda não existem quotas registadas.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ quotas|length }} registos</p>
+</div>
+
+{% endblock %}

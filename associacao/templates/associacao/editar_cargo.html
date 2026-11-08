@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar cargo{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Cargos / Editar{% endblock %}
+
+{% block page_title %}Editar cargo{% endblock %}
+
+{% block page_description %}Atualize os dados do cargo.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Órgão social <span class="required"></span>
+      <select name="{{ form.orgao_social.name }}" required>
+        <option value="">Selecione...</option>
+        {% for orgao in form.orgao_social.field.queryset %}
+        <option value="{{ orgao.pk }}" {% if form.orgao_social.value == orgao.pk %}selected{% endif %}>{{ orgao.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Nome <span class="required"></span>
+      <input type="text" name="{{ form.nome.name }}" value="{{ form.nome.value|default:'' }}" placeholder="Nome do cargo" required />
+    </label>
+    <label class="wide">
+      Descrição
+      <textarea name="{{ form.descricao.name }}" placeholder="Descrição do cargo (opcional)">{{ form.descricao.value|default:'' }}</textarea>
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_cargos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Composição do mandato{% endblock %}
+{% block page_eyebrow %}Mandatos{% endblock %}
+{% block page_title %}Composição do mandato{% endblock %}
+{% block page_description %}{{ mandato.1|date:"d/m/Y" }} — {{ mandato.2|date:"d/m/Y"|default:"em vigor" }}{% endblock %}
+{% block content %}
+<div class="table-card"><table><thead><tr><th>Órgão</th><th>Cargo</th><th>Associado</th><th>Início</th><th>Fim</th></tr></thead><tbody>
+{% for membro in composicao %}<tr><td>{{ membro.3 }}</td><td>{{ membro.2 }}</td><td>{{ membro.1 }}</td><td>{{ membro.4|date:"d/m/Y" }}</td><td>{{ membro.5|date:"d/m/Y"|default:"Em exercício" }}</td></tr>
+{% empty %}<tr><td colspan="5">Ainda não foram atribuídos cargos neste mandato.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

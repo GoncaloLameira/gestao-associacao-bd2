@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar exercício{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Exercícios de Cargo / Editar{% endblock %}
+
+{% block page_title %}Editar exercício{% endblock %}
+
+{% block page_description %}Atualize os dados do exercício de cargo.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Associado <span class="required"></span>
+      <select name="{{ form.associado.name }}" required>
+        <option value="">Selecione...</option>
+        {% for associado in form.associado.field.queryset %}
+        <option value="{{ associado.pk }}" {% if form.associado.value == associado.pk %}selected{% endif %}>#{{ associado.numero_associado }} {{ associado.nome_completo }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Cargo <span class="required"></span>
+      <select name="{{ form.cargo.name }}" required>
+        <option value="">Selecione...</option>
+        {% for cargo in form.cargo.field.queryset %}
+        <option value="{{ cargo.pk }}" {% if form.cargo.value == cargo.pk %}selected{% endif %}>{{ cargo.nome }} ({{ cargo.orgao_social.nome }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Mandato <span class="required"></span>
+      <select name="{{ form.mandato.name }}" required>
+        <option value="">Selecione...</option>
+        {% for mandato in form.mandato.field.queryset %}
+        <option value="{{ mandato.pk }}" {% if form.mandato.value == mandato.pk %}selected{% endif %}>{{ mandato.designacao|default:mandato.data_inicio|date:"Y" }}–{{ mandato.data_fim|date:"Y" }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Data de início <span class="required"></span>
+      <input type="date" name="{{ form.data_inicio.name }}" value="{{ form.data_inicio.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Data de fim
+      <input type="date" name="{{ form.data_fim.name }}" value="{{ form.data_fim.value|date:'Y-m-d'|default:'' }}" />
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_exercicios_cargo' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

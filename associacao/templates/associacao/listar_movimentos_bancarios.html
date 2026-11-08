@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Movimentos Bancários{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Movimentos Bancários{% endblock %}
+
+{% block page_title %}Movimentos Bancários{% endblock %}
+
+{% block page_description %}Entradas e saídas bancárias, com ligação opcional a pagamentos existentes.{% endblock %}
+
+{% block page_action %}
+<a href="{% url 'registar_movimento_bancario' %}" class="button primary">
+  Registar movimento
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="filters">
+  <label>
+    Pesquisa
+    <input type="text" placeholder="Número, nome ou referência" />
+  </label>
+  <label>
+    Estado
+    <input type="text" value="Todos os estados" readonly />
+  </label>
+  <button class="button">Filtrar</button>
+  <button class="text-link">Limpar</button>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Data</th>
+        <th>Valor</th>
+        <th>Referência</th>
+        <th>Pagamento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if movimentos %}
+        {% for movimento in movimentos %}
+        <tr>
+          <td>{{ movimento.2|default:"Movimento" }} {{ movimento.0 }}</td>
+          <td>{{ movimento.1|date:"d/m/Y" }}</td>
+          <td class="{% if movimento.3 < 0 %}table-value-negative{% else %}table-value-positive{% endif %}">
+            {% if movimento.3 < 0 %}−{% else %}+{% endif %}{{ movimento.3|floatformat:2 }} €
+          </td>
+          <td>{{ movimento.4|default:"—" }}</td>
+          <td>{% if movimento.5 and movimento.5 != "—" %}{{ movimento.5 }}{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            Não existem movimentos bancários registados.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <p class="footnote">{{ movimentos|length }} registos</p>
+</div>
+
+{% endblock %}

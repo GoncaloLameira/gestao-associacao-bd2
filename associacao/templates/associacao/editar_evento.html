@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar evento{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Eventos / Editar{% endblock %}
+
+{% block page_title %}Editar evento{% endblock %}
+
+{% block page_description %}Atualize os dados do evento.{% endblock %}
+
+{% block content %}
+<form class="form-card" method="post" novalidate>
+  {% csrf_token %}
+
+  <h3 class="section-title">Dados do registo</h3>
+  <div class="form-grid">
+    <label>
+      Nome <span class="required"></span>
+      <input type="text" name="{{ form.nome.name }}" value="{{ form.nome.value|default:'' }}" placeholder="Nome do evento" required />
+    </label>
+    <label>
+      Local <span class="required"></span>
+      <input type="text" name="{{ form.local.name }}" value="{{ form.local.value|default:'' }}" placeholder="Local do evento" required />
+    </label>
+    <label class="wide">
+      Descrição <span class="required"></span>
+      <textarea name="{{ form.descricao.name }}" placeholder="Descrição do evento" required>{{ form.descricao.value|default:'' }}</textarea>
+    </label>
+    <label>
+      Data de início <span class="required"></span>
+      <input type="date" name="{{ form.data_inicio.name }}" value="{{ form.data_inicio.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Hora de início <span class="required"></span>
+      <input type="time" name="{{ form.hora_inicio.name }}" value="{{ form.hora_inicio.value|time:'H:i'|default:'' }}" required />
+    </label>
+    <label>
+      Data de fim <span class="required"></span>
+      <input type="date" name="{{ form.data_fim.name }}" value="{{ form.data_fim.value|date:'Y-m-d'|default:'' }}" required />
+    </label>
+    <label>
+      Hora de fim <span class="required"></span>
+      <input type="time" name="{{ form.hora_fim.name }}" value="{{ form.hora_fim.value|time:'H:i'|default:'' }}" required />
+    </label>
+    <label>
+      Estado calculado
+      <input type="text" value="Será calculado automaticamente" readonly />
+    </label>
+  </div>
+
+  <div class="inline-actions">
+    <button class="button primary" type="submit">Guardar</button>
+    <a href="{% url 'listar_eventos' %}" class="button">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

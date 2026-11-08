@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Auditoria{% endblock %}
+
+{% block sidebar_subtitle %}Administração{% endblock %}
+
+{% block topbar_subtitle %}Conta partilhada da associação{% endblock %}
+
+{% block page_eyebrow %}Sistema{% endblock %}
+
+{% block page_title %}Auditoria{% endblock %}
+
+{% block page_description %}Registos de operações da sua associação.{% endblock %}
+
+{% block content %}
+{% if not ligado_mongodb %}
+  <div class="alert warning" role="status"><b>Auditoria indisponível</b><span>Não foi possível ligar ao serviço de auditoria. Os eventos podem não estar a ser gravados nem apresentados.</span></div>
+{% endif %}
+<form method="get" class="form-card mb-4">
+  <div class="form-grid">
+    <div><label for="data_inicio">Data inicial</label><input id="data_inicio" name="data_inicio" type="date" value="{{ filtros.data_inicio }}"></div>
+    <div><label for="data_fim">Data final</label><input id="data_fim" name="data_fim" type="date" value="{{ filtros.data_fim }}"></div>
+    <div><label for="operacao">Operação</label><input id="operacao" name="operacao" value="{{ filtros.operacao }}" placeholder="create, update, login..."></div>
+    <div><label for="entidade">Entidade</label><input id="entidade" name="entidade" value="{{ filtros.entidade }}" placeholder="associado, pagamento..."></div>
+  </div>
+  <button class="button primary mt-3" type="submit">Filtrar</button>
+</form>
+<div class="table-card">
+  <table>
+    <thead><tr><th>Data/hora</th><th>Operação</th><th>Entidade</th><th>Utilizador</th><th>Detalhes</th></tr></thead>
+    <tbody>{% for log in logs %}
+      <tr><td>{{ log.timestamp|date:"d/m/Y H:i:s" }}</td><td>{{ log.action }}</td><td>{{ log.entity_type }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}</td><td>{% if log.user_id %}{{ log.user_type }} #{{ log.user_id }}{% else %}—{% endif %}</td><td>{{ log.details }}</td></tr>
+      {% empty %}<tr><td colspan="5">Não existem registos para os filtros indicados.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<nav class="inline-actions" aria-label="Paginação da auditoria">
+  {% if tem_anterior %}<a class="button" href="{{ url_anterior }}">Eventos mais recentes</a>{% endif %}
+  <span>Página {{ pagina }}</span>
+  {% if tem_proxima %}<a class="button" href="{{ url_proxima }}">Eventos anteriores</a>{% endif %}
+</nav>
+{% endblock %}

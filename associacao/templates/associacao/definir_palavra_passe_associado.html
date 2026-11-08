@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Definir palavra-passe{% endblock %}
+{% block page_eyebrow %}Primeiro acesso{% endblock %}
+{% block page_title %}Defina a sua palavra-passe{% endblock %}
+{% block page_description %}Por segurança, substitua a palavra-passe temporária antes de continuar.{% endblock %}
+{% block content %}
+<form method="post" class="form-card" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<div class="alert error">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="form-grid">{% for field in form %}<label for="{{ field.id_for_label }}">{{ field.label }}{{ field }}{% if field.errors %}<span class="error-message">{{ field.errors.0 }}</span>{% endif %}</label>{% endfor %}</div>
+  <div class="inline-actions"><button class="button primary" type="submit">Guardar palavra-passe</button></div>
+</form>
+{% endblock %}

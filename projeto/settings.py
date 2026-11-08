@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
-from dadosutilizador import DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i(ep3f%4eov$^jm_@ov5k%k!8nty5r27z#y&k^1i41ace#fk$c'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-CHANGE-THIS-IN-PRODUCTION')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')]
 
 
 # Application definition
@@ -77,14 +81,34 @@ WSGI_APPLICATION = 'projeto.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gestao_associacao',
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+        'NAME': os.getenv('DB_NAME', 'gestao_associacao'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'sslmode': os.getenv('DB_SSLMODE', 'prefer'),
+        },
     }
 }
 
+# MongoDB Configuration
+# Used for logging, statistics, and audit trails
+MONGODB = {
+    'HOST': os.getenv('MONGO_HOST', 'localhost'),
+    'PORT': int(os.getenv('MONGO_PORT', '27017')),
+    'DB': os.getenv('MONGO_DB', 'gestao_associacao_logs'),
+    'USERNAME': os.getenv('MONGO_USERNAME', ''),
+    'PASSWORD': os.getenv('MONGO_PASSWORD', ''),
+}
+
+
+# Authentication Backends
+# Suporte para autenticação dual: Direção (associacao) e Associado (associado)
+AUTHENTICATION_BACKENDS = [
+    'associacao.auth_backends.DirecaoBackend',
+    'associacao.auth_backends.AssociadoBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -108,9 +132,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-pt'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Lisbon'
 
 USE_I18N = True
 
@@ -122,6 +146,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Media files (uploads)
+# https://docs.djangoproject.com/en/6.1/topics/files/
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -131,3 +160,6 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Custom test runner to apply SQL schema to test database
+TEST_RUNNER = 'associacao.test_runner.SQLSchemaTestRunner'
